@@ -23,7 +23,7 @@ def insert_usuario(nombre,clave,correo,apodo):
     hash_object = hashlib.sha512(clave)
     hex_dig = hash_object.hexdigest()
 
-    sql = "INSERTO INTO Usuario (nombre,clave,correo,apodo,tipo_usuario,numero_reservas) VALUES ('%s','%s','%s','%s',0,1)"
+    sql = "INSERTO INTO Usuario (nombre,clave,correo,apodo,tipo_usuario,numero_reservas) VALUES ('%s','%s','%s','%s',1,0)"
     sql_where = (nombre,clave_hash,correo,apodo,)
     
     cursor.execute(sql, sql_where) 
