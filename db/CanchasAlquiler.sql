@@ -131,3 +131,8 @@ CREATE TABLE `LeGusta` (
   PRIMARY KEY (`id_persona`,`id_lugar`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `revoked_tokens` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `jti` VARCHAR(120)
+  PRIMARY KEY (`id`)
+);

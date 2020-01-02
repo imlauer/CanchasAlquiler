@@ -38,3 +38,27 @@ def insert_usuario(nombre,clave,correo,apodo,telefono):
     
     cursor.execute(sql, (nombre,clave_hash,correo,apodo,telefono))
     mysql.connection.commit()
+
+def insert_revoked_token(jti):
+  cursor = mysql.connection.cursor()
+
+  sql = """INSERT INTO revoked_tokens (jdi) VALUES (%s)"""
+  cursor.execute(sql,(jdi))
+
+  mysql.connection.commit()
+
+def filtrar_por_general(tabla,cosa,nombre):
+  cursor = mysql.connection.cursor()
+
+  sql = """SELECT * FROM %s WHERE %s="%s" """
+  val = (tabla,cosa,nombre)
+
+  sql_query = sql % val
+  print(sql_query)
+
+  cursor.execute(sql_query)
+  row = cursor.fetchone()
+
+  print(row)
+  cursor.close()
+  return row

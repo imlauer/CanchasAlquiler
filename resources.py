@@ -77,8 +77,7 @@ class UserLogoutAccess(Resource):
   def post(self):
     jti = get_raw_jwt()['jti']
     try:
-        revoked_token = RevokedTokenModel(jti = jti)
-        revoked_token.add()
+        insert_revoked_token(jti)
         return {'message': 'Access token has been revoked'}
     except:
         return {'message': 'Something went wrong'}, 500
@@ -89,8 +88,7 @@ class UserLogoutRefresh(Resource):
   def post(self):
     jti = get_raw_jwt()['jti']
     try:
-        revoked_token = RevokedTokenModel(jti = jti)
-        revoked_token.add()
+        insert_revoked_token(jti)
         return {'message': 'Refresh token has been revoked'}
     except:
         return {'message': 'Something went wrong'}, 500
@@ -103,19 +101,9 @@ class TokenRefresh(Resource):
     access_token = create_access_token(identity = current_user)
     return {'access_token': access_token} 
 
-#class RevokedTokenModel(db.Model):
-#    __tablename__ = 'revoked_tokens'
-#    id = db.Column(db.Integer, primary_key = True)
-#    jti = db.Column(db.String(120))
-#    
-#    def add(self):
-#        db.session.add(self)
-#        db.session.commit()
-#    
-#    @classmethod
-#    def is_jti_blacklisted(cls, jti):
-#        query = cls.query.filter_by(jti = jti).first()
-#        return bool(query)
+def is_jti_blacklisted(jti):
+  query = filtrar_por_general("rovoked_tokens","jti",jti)[1]
+  return bool(query)
 
      
 class AllUsers(Resource):
@@ -128,9 +116,6 @@ class AllUsers(Resource):
             'correo': x[3]
         }
     return {'users': list(map(lambda x: to_json(x), record))}
-  
-  def delete(self):
-    return {'message': 'Delete all users'}
       
 class SecretResource(Resource):
     @jwt_required      
