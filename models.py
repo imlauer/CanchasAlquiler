@@ -1,22 +1,32 @@
 from gen_ver_hash import *
 from run import mysql
 
+def todos_los_usuarios():
+  cursor = mysql.connection.cursor()
+
+  sql = "SELECT * FROM Usuario"
+  
+  cursor.execute(sql)
+  record = cursor.fetchall()
+
+  cursor.close()
+  return record
 
 def filtrar_por(cosa,nombre):
-    cursor = mysql.connection.cursor()
+  cursor = mysql.connection.cursor()
 
-    sql = """SELECT * FROM Usuario WHERE %s="%s" """
-    val = (cosa,nombre)
+  sql = """SELECT * FROM Usuario WHERE %s="%s" """
+  val = (cosa,nombre)
 
-    sql_query = sql % val
-    print(sql_query)
+  sql_query = sql % val
+  print(sql_query)
 
-    cursor.execute(sql_query)
-    row = cursor.fetchone()
+  cursor.execute(sql_query)
+  row = cursor.fetchone()
 
-    print(row)
-    cursor.close()
-    return row
+  print(row)
+  cursor.close()
+  return row
 
 def insert_usuario(nombre,clave,correo,apodo,telefono):
     cursor = mysql.connection.cursor()

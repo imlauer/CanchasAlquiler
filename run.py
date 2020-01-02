@@ -22,7 +22,7 @@ api = Api(app)
 
 import views, models, resources
 
-app.config['JWT_SECRET_KEY'] = 'as32fsafdff'
+app.config['JWT_SECRET_KEY'] = 'KZPsLNpcsWWS&MY&is7gV6h!7s2E6UuQ@!d%2'
 
 jwt = JWTManager(app)
 
@@ -31,5 +31,5 @@ api.add_resource(resources.UserLogin, '/login')
 api.add_resource(resources.UserLogoutAccess, '/logout/access')
 api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
 api.add_resource(resources.TokenRefresh, '/token/refresh')
-api.add_resource(resources.AllUsers, '/users')
+api.add_resource(resources.AllUsers, '/lista_usuarios')
 api.add_resource(resources.SecretResource, '/secret')

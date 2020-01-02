@@ -73,26 +73,64 @@ class UserRegistration(Resource):
           return {'message': 'Algo falló'}, 500
 
 class UserLogoutAccess(Resource):
-    def post(self):
-        return {'message': 'User logout'}
-      
+  @jwt_required
+  def post(self):
+    jti = get_raw_jwt()['jti']
+    try:
+        revoked_token = RevokedTokenModel(jti = jti)
+        revoked_token.add()
+        return {'message': 'Access token has been revoked'}
+    except:
+        return {'message': 'Something went wrong'}, 500
+        
       
 class UserLogoutRefresh(Resource):
-    def post(self):
-        return {'message': 'User logout'}
+  @jwt_refresh_token_required
+  def post(self):
+    jti = get_raw_jwt()['jti']
+    try:
+        revoked_token = RevokedTokenModel(jti = jti)
+        revoked_token.add()
+        return {'message': 'Refresh token has been revoked'}
+    except:
+        return {'message': 'Something went wrong'}, 500
       
       
 class TokenRefresh(Resource):
-    def post(self):
-        return {'message': 'Token refresh'}
-      
-      
-class AllUsers(Resource):
-    def get(self):
-        return {'message': 'List of users'}
+  @jwt_refresh_token_required
+  def post(self):
+    current_user = get_jwt_identity()
+    access_token = create_access_token(identity = current_user)
+    return {'access_token': access_token} 
 
-    def delete(self):
-        return {'message': 'Delete all users'}
+#class RevokedTokenModel(db.Model):
+#    __tablename__ = 'revoked_tokens'
+#    id = db.Column(db.Integer, primary_key = True)
+#    jti = db.Column(db.String(120))
+#    
+#    def add(self):
+#        db.session.add(self)
+#        db.session.commit()
+#    
+#    @classmethod
+#    def is_jti_blacklisted(cls, jti):
+#        query = cls.query.filter_by(jti = jti).first()
+#        return bool(query)
+
+     
+class AllUsers(Resource):
+  def get(self):
+    record = todos_los_usuarios()
+    def to_json(x):
+        return {
+            'id':     x[0],
+            'nombre': x[1],
+            'correo': x[3]
+        }
+    return {'users': list(map(lambda x: to_json(x), record))}
+  
+  def delete(self):
+    return {'message': 'Delete all users'}
       
 class SecretResource(Resource):
     @jwt_required      

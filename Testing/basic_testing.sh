@@ -11,7 +11,7 @@ login(){
 register(){
   curl --header "Content-Type: application/json" \
     --request POST \
-    --data '{"nombre":"ImlauerAndrew","clave1":"imlauer123","clave2":"imlauer123","correo":"ricardoilopez@andressffds.ai","apodo":"AImlauer"}' \
+    --data '{"nombre":"Silence","clave1":"imlauer123","clave2":"imlauer123","correo":"silence@andres.ai","apodo":"ssad"}' \
     http://localhost:5000/registration
 }
 
@@ -28,7 +28,18 @@ secret_(){
     http://localhost:5000/secret
 }
 
+usuarios(){
+  curl --header "Content-Type: application/json" \
+    --request GET \
+    http://localhost:5000/lista_usuarios
+}
+
+
+
+
+
 #register
 #login
-secret_sin_token_de_acceso
+#secret_sin_token_de_acceso
 #secret_
+usuarios
