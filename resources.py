@@ -49,8 +49,8 @@ class UserRegistration(Resource):
           row_user = filtrar_por("nombre",data['nombre'])
           row_email = filtrar_por("correo",data['correo'])
 
-          current_user = row['nombre']
-          current_email = row['correo']
+          current_user = row_user['nombre']
+          current_email = row_email['correo']
 
           if current_user or current_email:
             return {'message':"El usuario o el correo están en uso"}
