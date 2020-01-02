@@ -15,6 +15,7 @@ parser_reg.add_argument('clave1', help = 'Este campo no puede estar vacio', requ
 parser_reg.add_argument('clave2', help = 'Este campo no puede estar vacio', required = True)
 parser_reg.add_argument('correo', help = 'Este campo no puede estar vacio', required = True)
 parser_reg.add_argument('apodo', help = 'Este campo no puede estar vacio', required = True)
+parser_reg.add_argument('telefono', help = 'Este campo no puede estar vacio', required = False)
 
 
 class UserLogin(Resource):
@@ -45,18 +46,21 @@ class UserRegistration(Resource):
         data = parser_reg.parse_args()
         if data['clave1'] != data['clave2']:
           return {'message':'Las claves no coinciden'}
+        if not data['telefono']:
+          data['telefono'] = "0"
 
         try:
           row_user = filtrar_por("nombre",data['nombre'])
           row_email = filtrar_por("correo",data['correo'])
 
-          current_user = row_user['nombre']
-          current_email = row_email['correo']
+          #current_user = row_user['nombre']
+          #current_email = row_email['correo']
 
-          if current_user or current_email:
-            return {'message':"El usuario o el correo están en uso"}
+          if row_user or row_email:
+            return {'message':"El usuario o el correo ha sido usado"}
 
-          insert_usuario(data['nombre'],data['clave1'],data['correo'],data['apodo'])
+          insert_usuario(data['nombre'],data['clave1'],data['correo'],data['apodo'],data['telefono'])
+
           access_token = create_access_token(identity = data['nombre'])
           refresh_token = create_refresh_token(identity = data['nombre'])
           return {
@@ -64,10 +68,10 @@ class UserRegistration(Resource):
               'access_token': access_token,
               'refresh_token': refresh_token
           }
-        except:
+        except Exception as e:
+          print(e)
           return {'message': 'Algo falló'}, 500
-          
-      
+
 class UserLogoutAccess(Resource):
     def post(self):
         return {'message': 'User logout'}
