@@ -4,10 +4,18 @@ from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_r
 from models import *
 from db import mysql
 
+#Login
+parser_log = reqparse.RequestParser()
+parser_log.add_argument('nombre', help = 'This field cannot be blank', required = True)
+parser_log.add_argument('clave', help = 'This field cannot be blank', required = True)
+#Register
+parser_reg = reqparse.RequestParser()
+parser_reg.add_argument('nombre', help = 'This field cannot be blank', required = True)
+parser_reg.add_argument('clave1', help = 'This field cannot be blank', required = True)
+parser_reg.add_argument('clave2', help = 'This field cannot be blank', required = True)
+parser_reg.add_argument('correo', help = 'This field cannot be blank', required = True)
+parser_reg.add_argument('apodo', help = 'This field cannot be blank', required = True)
 
-parser = reqparse.RequestParser()
-parser.add_argument('nombre', help = 'This field cannot be blank', required = True)
-parser.add_argument('clave', help = 'This field cannot be blank', required = True)
 
 def generate_hash(password):
   return sha256.hash(password) 
@@ -49,7 +57,7 @@ class UserLogin(Resource):
 
 class UserRegistration(Resource):
     def post(self):
-        data = parser.parse_args()
+        data = parser_reg.parse_args()
         try:
           current_user = filtrar_por("nombre",data['nombre'])
           current_email = filtrar_por("correo",data['correo'])
