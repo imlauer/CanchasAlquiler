@@ -33,7 +33,11 @@ def insert_usuario(data,...):
     sql = "INSERTO INTO Usuario (nombre,clave,correo,apodo,tipo_usuario,numero_reservas) VALUES ('%s','%s','%s','%s',0,1)"
     sql_where = (_nombre,hex_dig,_correo,_apodo,)
     
-    # Como verifico que se ejecutó bien la consulta? 
     cursor.execute(sql, sql_where)
 
-    cursor.commit()
+  except Error as error:
+    print(error)
+ 
+  finally:
+    cursor.close()
+    conn.close()
