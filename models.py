@@ -1,15 +1,17 @@
 from gen_ver_hash import *
+from run import mysql
 
-def filtrar_por(cosa,nombre): 
-    conn = mysql.connect()
+
+def filtrar_por(cosa,nombre):
+    conn = mysql.connect
     cursor = conn.cursor()
 
     sql = "SELECT * FROM Usuario WHERE %s=%s"
-    sql_where = (sql,cosa,nombre)
+    val = (cosa,nombre)
+
+    cursor.execute(sql,val)    
     row = cursor.fetchone()
 
-    cursor.close()
-    conn.close()
     return row
 
 def insert_usuario(nombre,clave,correo,apodo):

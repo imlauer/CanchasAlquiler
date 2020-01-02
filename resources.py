@@ -1,19 +1,20 @@
 from flask_restful import Resource, reqparse
 from passlib.hash import pbkdf2_sha256 as sha256
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
+from gen_ver_hash import *
 from models import *
 
 #Login
 parser_log = reqparse.RequestParser()
-parser_log.add_argument('nombre', help = 'This field cannot be blank', required = True)
-parser_log.add_argument('clave', help = 'This field cannot be blank', required = True)
+parser_log.add_argument('nombre', help = 'Este campo no puede estar vacio', required = True)
+parser_log.add_argument('clave', help = 'Este campo no puede estar vacio', required = True)
 #Register
 parser_reg = reqparse.RequestParser()
-parser_reg.add_argument('nombre', help = 'This field cannot be blank', required = True)
-parser_reg.add_argument('clave1', help = 'This field cannot be blank', required = True)
-parser_reg.add_argument('clave2', help = 'This field cannot be blank', required = True)
-parser_reg.add_argument('correo', help = 'This field cannot be blank', required = True)
-parser_reg.add_argument('apodo', help = 'This field cannot be blank', required = True)
+parser_reg.add_argument('nombre', help = 'Este campo no puede estar vacio', required = True)
+parser_reg.add_argument('clave1', help = 'Este campo no puede estar vacio', required = True)
+parser_reg.add_argument('clave2', help = 'Este campo no puede estar vacio', required = True)
+parser_reg.add_argument('correo', help = 'Este campo no puede estar vacio', required = True)
+parser_reg.add_argument('apodo', help = 'Este campo no puede estar vacio', required = True)
 
 
 class UserLogin(Resource):
@@ -21,9 +22,8 @@ class UserLogin(Resource):
         data = parser_log.parse_args()
         try:
           row = filtrar_por("nombre",data['nombre'])
-          current_user = row['nombre']
 
-          if not current_user:
+          if not row:
             return {'message':"El usuario {} no existe".format(data['nombre'])}
           else:
             if verify_hash(data['clave'],row['clave']):
@@ -36,10 +36,10 @@ class UserLogin(Resource):
               }
             else:
               return {'message',"Datos incorrectos"}
-        except:
+        except Exception as e:
+          print(e)
           return {'message': 'Algo falló'}, 500
         
-
 class UserRegistration(Resource):
     def post(self):
         data = parser_reg.parse_args()
