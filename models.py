@@ -26,5 +26,5 @@ def insert_usuario(nombre,clave,correo,apodo,telefono):
 
     sql = """INSERT INTO Usuario (nombre,clave,correo,apodo,telefono,tipo_usuario,numero_reservas) VALUES (%s,%s,%s,%s,%s,1,0)"""
     
-    cursor.execute(sql, (nombre,clave,correo,apodo,telefono))
+    cursor.execute(sql, (nombre,clave_hash,correo,apodo,telefono))
     mysql.connection.commit()

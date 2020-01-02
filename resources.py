@@ -94,8 +94,8 @@ class AllUsers(Resource):
     def delete(self):
         return {'message': 'Delete all users'}
       
-      
 class SecretResource(Resource):
+    @jwt_required      
     def get(self):
         return {
             'answer': 42
