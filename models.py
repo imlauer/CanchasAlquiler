@@ -1,27 +1,20 @@
 from db import mysql
 
 def filtrar_por(cosa,nombre): 
-    try:
-      conn = mysql.connect()
-      cursor = conn.cursor()
+    conn = mysql.connect()
+    cursor = conn.cursor()
 
-      sql = "SELECT * FROM Usuario WHERE %s=%s"
-      sql_where = (sql,cosa,nombre)
-      row = cursor.fetchone()
+    sql = "SELECT * FROM Usuario WHERE %s=%s"
+    sql_where = (sql,cosa,nombre)
+    row = cursor.fetchone()
 
-      current_user = row['nombre']
+    current_user = row['nombre']
 
-      return current_user 
-      
-    except Error as error:
-        print(error)
-
-    finally:
-        cursor.close()
-        conn.close()
+    cursor.close()
+    conn.close()
+    return current_user
 
 def insert_usuario(nombre,clave,correo,apodo):
-  try:
     conn = mysql.connect()
     cursor = conn.cursor()
 
@@ -33,11 +26,6 @@ def insert_usuario(nombre,clave,correo,apodo):
     sql = "INSERTO INTO Usuario (nombre,clave,correo,apodo,tipo_usuario,numero_reservas) VALUES ('%s','%s','%s','%s',0,1)"
     sql_where = (nombre,clave_hash,correo,apodo,)
     
-    cursor.execute(sql, sql_where)
-
-  except Error as error:
-    print(error)
- 
-  finally:
+    cursor.execute(sql, sql_where) 
     cursor.close()
     conn.close()
