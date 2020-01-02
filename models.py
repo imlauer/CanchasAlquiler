@@ -1,4 +1,3 @@
-from db import mysql
 from gen_ver_hash import *
 
 def filtrar_por(cosa,nombre): 

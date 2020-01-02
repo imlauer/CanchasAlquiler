@@ -1,4 +1,4 @@
-#!/home/nist778/CanchasAlquiler/venv/bin/python
+#!/home/nist778/nist778/CanchasAlquiler/venv/bin/python
 
 import sys
 import getopt

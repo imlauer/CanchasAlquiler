@@ -1,10 +1,19 @@
 from flask import Flask
-from flaskext.mysql import MySQL
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from flaskext.mysql import MySQL
 
 app = Flask(__name__)
 api = Api(app)
+
+import views, models, resources
+api.add_resource(resources.UserRegistration, '/registration')
+api.add_resource(resources.UserLogin, '/login')
+api.add_resource(resources.UserLogoutAccess, '/logout/access')
+api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
+api.add_resource(resources.TokenRefresh, '/token/refresh')
+api.add_resource(resources.AllUsers, '/users')
+api.add_resource(resources.SecretResource, '/secret')
 
 mysql = MySQL()
  
@@ -19,12 +28,4 @@ app.config['JWT_SECRET_KEY'] = 'jwt-secret-string'
 mysql.init_app(app)
 jwt = JWTManager(app)
 
-import views, models, resources
 
-api.add_resource(resources.UserRegistration, '/registration')
-api.add_resource(resources.UserLogin, '/login')
-api.add_resource(resources.UserLogoutAccess, '/logout/access')
-api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
-api.add_resource(resources.TokenRefresh, '/token/refresh')
-api.add_resource(resources.AllUsers, '/users')
-api.add_resource(resources.SecretResource, '/secret')
