@@ -20,7 +20,7 @@ def filtrar_por_nombre(nombre):
         cursor.close()
         conn.close()
 
-def insert_usuario(data,...):
+def insert_usuario(nombre,clave,correo,apodo):
   try:
     conn = mysql.connect()
     cursor = conn.cursor()
@@ -31,7 +31,7 @@ def insert_usuario(data,...):
     hex_dig = hash_object.hexdigest()
 
     sql = "INSERTO INTO Usuario (nombre,clave,correo,apodo,tipo_usuario,numero_reservas) VALUES ('%s','%s','%s','%s',0,1)"
-    sql_where = (_nombre,hex_dig,_correo,_apodo,)
+    sql_where = (nombre,clave_hash,correo,apodo,)
     
     cursor.execute(sql, sql_where)
 
