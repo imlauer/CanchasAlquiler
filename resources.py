@@ -20,7 +20,7 @@ parser_reg.add_argument('apodo', help = 'This field cannot be blank', required =
 
 class UserLogin(Resource):
     def post(self):
-        data = parser.parse_args()
+        data = parser_log.parse_args()
         try:
           conn = mysql.connect()
           cursor = conn.cursor()
