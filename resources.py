@@ -58,6 +58,9 @@ class UserLogin(Resource):
 class UserRegistration(Resource):
     def post(self):
         data = parser_reg.parse_args()
+        if data['clave1'] != data['clave2']:
+          return {'message':'Las claves no coinciden'}
+
         try:
           current_user = filtrar_por("nombre",data['nombre'])
           current_email = filtrar_por("correo",data['correo'])
@@ -65,7 +68,7 @@ class UserRegistration(Resource):
           if current_user or current_email:
             return {'message':"El usuario o el correo están en uso"}
 
-          insert_usuario(data['nombre'],data['clave'],data['correo'],data['apodo'])
+          insert_usuario(data['nombre'],data['clave1'],data['correo'],data['apodo'])
           access_token = create_access_token(identity = data['nombre'])
           refresh_token = create_refresh_token(identity = data['nombre'])
           return {

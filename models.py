@@ -26,9 +26,7 @@ def insert_usuario(nombre,clave,correo,apodo):
     cursor = conn.cursor()
 
     # Cambiar después
-    clave = str.encode(clave1)
-    hash_object = hashlib.sha512(clave)
-    hex_dig = hash_object.hexdigest()
+    clave_hash = generate_hash(clave)
 
     sql = "INSERTO INTO Usuario (nombre,clave,correo,apodo,tipo_usuario,numero_reservas) VALUES ('%s','%s','%s','%s',1,0)"
     sql_where = (nombre,clave_hash,correo,apodo,)
