@@ -54,12 +54,18 @@ class UserRegistration(Resource):
     def post(self):
         data = parser.parse_args()
         try:
-          current_user = filtrar_por_nombre(data['nombre'])
+          current_user = filtrar_por("nombre",data['nombre'])
+          current_email = filtrar_por("correo",data['correo'])
           
-          if current_user:
-            return {'message':"El usuario {} está en uso".format(data['nombre'])}
+          if current_user or current_email:
+            return {'message':"El usuario o el correo están en uso"}
 
-          insert_usuario(current_user,)
+          insert_usuario(data['nombre'],data['clave'],data['correo'],data['apodo'])
+          return {
+              'message': 'El usuario {} se creó'.format(data['username'])
+          }
+        except:
+          return {'message': 'Algo falló'}, 500
           
       
 class UserLogoutAccess(Resource):

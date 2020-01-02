@@ -1,12 +1,12 @@
 from db import mysql
 
-def filtrar_por_nombre(nombre): 
+def filtrar_por(cosa,nombre): 
     try:
       conn = mysql.connect()
       cursor = conn.cursor()
 
-      sql = "SELECT * FROM Usuario WHERE nombre=%s"
-      sql_where = (sql,nombre)
+      sql = "SELECT * FROM Usuario WHERE %s=%s"
+      sql_where = (sql,cosa,nombre)
       row = cursor.fetchone()
 
       current_user = row['nombre']
