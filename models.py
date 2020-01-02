@@ -2,20 +2,20 @@ from db import mysql
 
 def filtrar_por_nombre(nombre): 
     try:
-        conn = mysql.connect()
-        cursor = conn.cursor()
+      conn = mysql.connect()
+      cursor = conn.cursor()
 
-        sql = "SELECT * FROM Usuario WHERE nombre=%s"
-        sql_where = (sql,nombre)
-        row = cursor.fetchone()
+      sql = "SELECT * FROM Usuario WHERE nombre=%s"
+      sql_where = (sql,nombre)
+      row = cursor.fetchone()
 
-        current_user = row['nombre']
+      current_user = row['nombre']
 
-        return current_user 
-        
+      return current_user 
+      
     except Error as error:
         print(error)
- 
+
     finally:
         cursor.close()
         conn.close()
