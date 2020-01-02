@@ -18,11 +18,6 @@ parser_reg.add_argument('correo', help = 'This field cannot be blank', required 
 parser_reg.add_argument('apodo', help = 'This field cannot be blank', required = True)
 
 
-def generate_hash(password):
-  return sha256.hash(password) 
-def verify_hash(password, hash):
-  return sha256.verify(password, hash)
-
 class UserLogin(Resource):
     def post(self):
         data = parser.parse_args()
