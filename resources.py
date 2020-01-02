@@ -18,7 +18,6 @@ class UserLogin(Resource):
     def post(self):
         data = parser.parse_args()
         try:
-          # filtrar_por_nombre(data['nombre'])
           conn = mysql.connect()
           cursor = conn.cursor()
 
@@ -47,8 +46,6 @@ class UserLogin(Resource):
             cursor.close()
             conn.close()
         
-# Filtrar por nombre
-# Insert usuario 
 
 class UserRegistration(Resource):
     def post(self):
@@ -61,8 +58,12 @@ class UserRegistration(Resource):
             return {'message':"El usuario o el correo están en uso"}
 
           insert_usuario(data['nombre'],data['clave'],data['correo'],data['apodo'])
+          access_token = create_access_token(identity = data['nombre'])
+          refresh_token = create_refresh_token(identity = data['nombre'])
           return {
-              'message': 'El usuario {} se creó'.format(data['username'])
+              'message': 'El usuario {} se creó'.format(data['nombre']),
+              'access_token': access_token,
+              'refresh_token': refresh_token
           }
         except:
           return {'message': 'Algo falló'}, 500

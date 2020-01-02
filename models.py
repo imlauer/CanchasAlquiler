@@ -1,4 +1,11 @@
 from db import mysql
+from passlib.hash import pbkdf2_sha256 as sha256
+
+def generate_hash(password):
+  return sha256.hash(password) 
+def verify_hash(password, hash):
+  return sha256.verify(password, hash)
+
 
 def filtrar_por(cosa,nombre): 
     conn = mysql.connect()
