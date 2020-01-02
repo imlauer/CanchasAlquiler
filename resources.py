@@ -21,13 +21,7 @@ class UserLogin(Resource):
     def post(self):
         data = parser_log.parse_args()
         try:
-          conn = mysql.connect()
-          cursor = conn.cursor()
-
-          sql = "SELECT * FROM Usuario WHERE nombre=%s"
-          sql_where = (sql,data['nombre'])
-          row = cursor.fetchone()
-
+          row = filtrar_por("nombre",data['nombre'])
           current_user = row['nombre']
 
           if not current_user:
@@ -43,11 +37,6 @@ class UserLogin(Resource):
               }
             else:
               return {'message',"Datos incorrectos"}
-
-        finally:
-          if cursor and conn:
-            cursor.close()
-            conn.close()
         
 
 class UserRegistration(Resource):
@@ -57,9 +46,12 @@ class UserRegistration(Resource):
           return {'message':'Las claves no coinciden'}
 
         try:
-          current_user = filtrar_por("nombre",data['nombre'])
-          current_email = filtrar_por("correo",data['correo'])
-          
+          row_user = filtrar_por("nombre",data['nombre'])
+          row_email = filtrar_por("correo",data['correo'])
+
+          current_user = row['nombre']
+          current_email = row['correo']
+
           if current_user or current_email:
             return {'message':"El usuario o el correo están en uso"}
 

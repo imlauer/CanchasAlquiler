@@ -9,11 +9,9 @@ def filtrar_por(cosa,nombre):
     sql_where = (sql,cosa,nombre)
     row = cursor.fetchone()
 
-    current_user = row['nombre']
-
     cursor.close()
     conn.close()
-    return current_user
+    return row
 
 def insert_usuario(nombre,clave,correo,apodo):
     conn = mysql.connect()
