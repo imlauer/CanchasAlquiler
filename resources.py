@@ -17,105 +17,147 @@ parser_reg.add_argument('correo', help = 'Este campo no puede estar vacio', requ
 parser_reg.add_argument('apodo', help = 'Este campo no puede estar vacio', required = True)
 parser_reg.add_argument('telefono', help = 'Este campo no puede estar vacio', required = False)
 
-
 class UserLogin(Resource):
-    def post(self):
-        data = parser_log.parse_args()
-        try:
-          row = filtrar_por("nombre",data['nombre'])
+  def post(self):
+    data = parser_log.parse_args()
+    current_user = UsuarioModel.find_by_nombre(data['nombre'])
 
-          if not row:
-            return {'message':"El usuario {} no existe".format(data['nombre'])}
-          else:
-            if verify_hash(data['clave'],row['clave']):
-              access_token = create_access_token(identify = data['nombre'])
-              refresh_token = create_refresh_token(identify = data['nombre'])
-              return {
-                'message': 'Te has logueado como {}'.format(row['nombre']),
-                'access_token': access_token,
-                'refresh_token': refresh_token
-              }
-            else:
-              return {'message',"Datos incorrectos"}
-        except Exception as e:
-          print(e)
-          return {'message': 'Algo falló'}, 500
+    if not current_user:
+      return {'message':"El usuario {} no existe".format(data['nombre'])}
+
+    if UsuarioModel.verify_hash(data['password'], current_user.clave):
+      access_token = create_access_token(identify = data['nombre'])
+      refresh_token = create_refresh_token(identify = data['nombre'])
+      return {
+        'message': 'Te has logueado como {}'.format(row['nombre']),
+        'access_token': access_token,
+        'refresh_token': refresh_token
+      }
+    else:
+      return {'message',"Datos incorrectos"}
+
+#class UserLogin(Resource):
+#    def post(self):
+#        data = parser_log.parse_args()
+#        try:
+#          row = filtrar_por("nombre",data['nombre'])
+#
+#          if not row:
+#            return {'message':"El usuario {} no existe".format(data['nombre'])}
+#          else:
+#            if verify_hash(data['clave'],row['clave']):
+#              access_token = create_access_token(identify = data['nombre'])
+#              refresh_token = create_refresh_token(identify = data['nombre'])
+#              return {
+#                'message': 'Te has logueado como {}'.format(row['nombre']),
+#                'access_token': access_token,
+#                'refresh_token': refresh_token
+#              }
+#            else:
+#              return {'message',"Datos incorrectos"}
+#        except Exception as e:
+#          print(e)
+#          return {'message': 'Algo falló'}, 500
         
 class UserRegistration(Resource):
-    def post(self):
-        data = parser_reg.parse_args()
-        if data['clave1'] != data['clave2']:
-          return {'message':'Las claves no coinciden'}
-        if not data['telefono']:
-          data['telefono'] = "0"
+  def post(self):
+    if data['clave1'] != data['clave2']:
+      return {'message':'Las claves no coinciden'}
 
-        try:
-          row_user = filtrar_por("nombre",data['nombre'])
-          row_email = filtrar_por("correo",data['correo'])
+    data = parser_reg.parse_args()
 
-          #current_user = row_user['nombre']
-          #current_email = row_email['correo']
+    if UsuarioModel.find_by_nombre(data['nombre']) or UserModel.find_by_correo(data['correo']):
+      return {'message': 'El usuario o el correo han sido usados.'}
+    nuevo_usuario = UsuarioModelo (
+      nombre = data['nombre'],
+      clave = UsuarioModel.generate_hash(data['clave']),
+      correo = data['corre'],
+      apodo = data['apodo'],
+      tipo_usuario = 1,
+      numero_reservas = 0
+    )
+    try:
+      nuevo_usuario.save_to_db()
+      access_token = create_access_token(identity = data['nombre'])
+      refresh_token = create_refresh_token(identity = data['nombre'])
+      return {
+          'message': 'El usuario {} se creó'.format(data['nombre']),
+          'access_token': access_token,
+          'refresh_token': refresh_token
+      }
+    except:
+      print(e)
+      return {'message': 'Algo falló'}, 500
 
-          if row_user or row_email:
-            return {'message':"El usuario o el correo ha sido usado"}
 
-          insert_usuario(data['nombre'],data['clave1'],data['correo'],data['apodo'],data['telefono'])
-
-          access_token = create_access_token(identity = data['nombre'])
-          refresh_token = create_refresh_token(identity = data['nombre'])
-          return {
-              'message': 'El usuario {} se creó'.format(data['nombre']),
-              'access_token': access_token,
-              'refresh_token': refresh_token
-          }
-        except Exception as e:
-          print(e)
-          return {'message': 'Algo falló'}, 500
+#class UserRegistration2(Resource):
+#    def post(self):
+#        data = parser_reg.parse_args()
+#        if data['clave1'] != data['clave2']:
+#          return {'message':'Las claves no coinciden'}
+#        if not data['telefono']:
+#          data['telefono'] = "0"
+#
+#        try:
+#          row_user = filtrar_por("nombre",data['nombre'])
+#          row_email = filtrar_por("correo",data['correo'])
+#
+#          #current_user = row_user['nombre']
+#          #current_email = row_email['correo']
+#
+#          if row_user or row_email:
+#            return {'message':"El usuario o el correo ha sido usado"}
+#
+#          insert_usuario(data['nombre'],data['clave1'],data['correo'],data['apodo'],data['telefono'])
+#
+#          access_token = create_access_token(identity = data['nombre'])
+#          refresh_token = create_refresh_token(identity = data['nombre'])
+#          return {
+#              'message': 'El usuario {} se creó'.format(data['nombre']),
+#              'access_token': access_token,
+#              'refresh_token': refresh_token
+#          }
+#        except Exception as e:
+#          print(e)
+#          return {'message': 'Algo falló'}, 500
 
 class UserLogoutAccess(Resource):
   @jwt_required
   def post(self):
     jti = get_raw_jwt()['jti']
     try:
-        insert_revoked_token(jti)
-        return {'message': 'Access token has been revoked'}
+      revoked_token = RevokedTokenModel(jti = jti)
+      revoked_token.add()
+      return {'message': 'Access token has been revoked'}
     except:
-        return {'message': 'Something went wrong'}, 500
-        
-      
+      return {'message': 'Something went wrong'}, 500
+
 class UserLogoutRefresh(Resource):
   @jwt_refresh_token_required
   def post(self):
     jti = get_raw_jwt()['jti']
     try:
-        insert_revoked_token(jti)
-        return {'message': 'Refresh token has been revoked'}
+      revoked_token = RevokedTokenModel(jti = jti)
+      revoked_token.add()
+      return {'message': 'Refresh token has been revoked'}
     except:
-        return {'message': 'Something went wrong'}, 500
-      
-      
+      return {'message': 'Something went wrong'}, 500
+
+
 class TokenRefresh(Resource):
   @jwt_refresh_token_required
   def post(self):
     current_user = get_jwt_identity()
     access_token = create_access_token(identity = current_user)
-    return {'access_token': access_token} 
+    return {'access_token': access_token}
 
-def is_jti_blacklisted(jti):
-  query = filtrar_por_general("rovoked_tokens","jti",jti)[1]
-  return bool(query)
 
-     
 class AllUsers(Resource):
   def get(self):
-    record = todos_los_usuarios()
-    def to_json(x):
-        return {
-            'id':     x[0],
-            'nombre': x[1],
-            'correo': x[3]
-        }
-    return {'users': list(map(lambda x: to_json(x), record))}
+    return UserModel.return_all()
+  
+  def delete(self):
+    return UserModel.delete_all() 
       
 class SecretResource(Resource):
     @jwt_required      

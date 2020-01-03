@@ -1,5 +1,57 @@
-from gen_ver_hash import *
+from passlib.hash import pbkdf2_sha256 as sha256
 from run import mysql
+
+
+class UsuarioModel(db.Model):
+  __table_args__ = {'extend_existing': True}
+  __tablename__ = 'Usuario'
+
+  id =     Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+  nombre = Column(String(length=60), nullable=False, unique=False)
+  clave =  Column(String(length=100), nullable=False, unique=False)
+  correo = Column(String(length=100), nullable=False, unique=False)
+  apodo =  Column(String(length=50), nullable=False, unique=False)
+  tipo_usuario = Column(Integer, nullable=False, unique=False)
+  telefono = Column(String(length=100), nullable=False, unique=False)
+  numero_reservas = Column(Integer, nullable=True, unique=False)
+
+  @classmethod
+  def find_by_nombre(cls, nombre):
+      return cls.query.filter_by(nombre = nombre).first()
+
+
+  @staticmethod
+  def generate_hash(password):
+    return sha256.hash(password)
+  
+  @staticmethod
+  def verify_hash(password, hash):
+    return sha256.verify(password, hash)
+
+  def save_to_db(self):
+    db.session.add(self)
+    db.session.commit() # this needed to write the changes to database
+
+  def __repr__(self):
+    return "<User(name='{0}', fullname='{1}', nickname='{2}')>".format(
+                        self.nombre, self.correo, self.clave)
+
+
+class RevokedTokenModel(db.Model):
+    # Creala si tira error
+    __tablename__ = 'revoked_tokens'
+    id = db.Column(db.Integer, primary_key = True)
+    jti = db.Column(db.String(120))
+    
+    def add(self):
+        db.session.add(self)
+        db.session.commit()
+    
+    @classmethod
+    def is_jti_blacklisted(cls, jti):
+        query = cls.query.filter_by(jti = jti).first()
+        return bool(query)
+
 
 def todos_los_usuarios():
   cursor = mysql.connection.cursor()
