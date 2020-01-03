@@ -1,0 +1,21 @@
+
+
+You seem to have an impression that SQLAlchemy can only work with a database structure created by SQLAlchemy (probably using MetaData.create_all()) - this is not correct. SQLAlchemy can work perfectly with a pre-existing database, you just need to define your models to match database tables. One way to do that is to use reflection, as Ilja Everilä suggests:
+
+class MyClass(Base):
+    __table__ = Table('mytable', Base.metadata,
+                    autoload=True, autoload_with=some_engine)
+
+(which, in my opinion, would be totally fine for one-off scripts but may lead to incredibly frustrating bugs in a "real" application if there's a potential that the database structure may change over time)
+
+Another way is to simply define your models as usual taking care to define your models to match the database tables, which is not that difficult. The benefit of this approach is that you can map only a subset of database tables to you models and even only a subset of table columns to your model's fields. Suppose you have 10 tables in the database but only interested in users table from where you only need id, name and email fields:
+
+class User(Base):
+    id = sa.Column(sa.Integer, primary_key=True)
+    name = sa.Column(sa.String)
+    email = sa.Column(sa.String)
+
+(note how we didn't need to define some details which are only needed to emit correct DDL, such as the length of the String fields or the fact that the email field has an index)
+
+SQLAlchemy will not emit INSERT/UPDATE queries unless you create or modify models in your code. If you want to ensure that your queries are read-only you may create a special user in the database and grant that user SELECT privileges only. Alternatively/in addition, you may also experiment with rolling back the transaction in your application code.
+
