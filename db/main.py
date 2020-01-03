@@ -34,7 +34,7 @@ Session.configure(bind=engine)
 session = Session()
  
 # Add a user
-jwk_user = User(nombre='jesper', clave='JesperWisborgKrogh@asd.co', correo="sa@sd.com", apodo='&#x1f42c;',tipo_usuario=1,telefono="0",numero_reservas=3212)
+jwk_user = User(nombre='Anda', clave='_flordeamapola', correo="sa@sd.com", apodo='&#x1f42c;',tipo_usuario=1,telefono="0",numero_reservas=3212)
 session.add(jwk_user)
 session.commit()
  
