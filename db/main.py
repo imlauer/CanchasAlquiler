@@ -39,6 +39,6 @@ session.add(jwk_user)
 session.commit()
  
 # Query the user
-our_user = session.query(User).filter_by(nombre='jesper').first()
+our_user = session.query(User).filter_by(nombre='Anda').first()
 print('\nOur User:')
 print(our_user)
