@@ -36,42 +36,19 @@ class UserLogin(Resource):
     else:
       return {'message',"Datos incorrectos"}
 
-#class UserLogin(Resource):
-#    def post(self):
-#        data = parser_log.parse_args()
-#        try:
-#          row = filtrar_por("nombre",data['nombre'])
-#
-#          if not row:
-#            return {'message':"El usuario {} no existe".format(data['nombre'])}
-#          else:
-#            if verify_hash(data['clave'],row['clave']):
-#              access_token = create_access_token(identify = data['nombre'])
-#              refresh_token = create_refresh_token(identify = data['nombre'])
-#              return {
-#                'message': 'Te has logueado como {}'.format(row['nombre']),
-#                'access_token': access_token,
-#                'refresh_token': refresh_token
-#              }
-#            else:
-#              return {'message',"Datos incorrectos"}
-#        except Exception as e:
-#          print(e)
-#          return {'message': 'Algo falló'}, 500
-        
 class UserRegistration(Resource):
   def post(self):
-    if data['clave1'] != data['clave2']:
-      return {'message':'Las claves no coinciden'}
 
     data = parser_reg.parse_args()
-
-    if UsuarioModel.find_by_nombre(data['nombre']) or UserModel.find_by_correo(data['correo']):
+    if data['clave1'] != data['clave2']:
+      return {'message':'Las claves no coinciden'}
+    if UsuarioModel.find_by_nombre(data['nombre']) or UsuarioModel.find_by_correo(data['correo']):
       return {'message': 'El usuario o el correo han sido usados.'}
-    nuevo_usuario = UsuarioModelo (
+
+    nuevo_usuario = UsuarioModel (
       nombre = data['nombre'],
-      clave = UsuarioModel.generate_hash(data['clave']),
-      correo = data['corre'],
+      clave = UsuarioModel.generate_hash(data['clave1']),
+      correo = data['correo'],
       apodo = data['apodo'],
       tipo_usuario = 1,
       numero_reservas = 0
@@ -81,45 +58,13 @@ class UserRegistration(Resource):
       access_token = create_access_token(identity = data['nombre'])
       refresh_token = create_refresh_token(identity = data['nombre'])
       return {
-          'message': 'El usuario {} se creó'.format(data['nombre']),
+          'message': 'El usuario {} se ha creado'.format(data['nombre']),
           'access_token': access_token,
           'refresh_token': refresh_token
       }
-    except:
+    except Exception as e:
       print(e)
       return {'message': 'Algo falló'}, 500
-
-
-#class UserRegistration2(Resource):
-#    def post(self):
-#        data = parser_reg.parse_args()
-#        if data['clave1'] != data['clave2']:
-#          return {'message':'Las claves no coinciden'}
-#        if not data['telefono']:
-#          data['telefono'] = "0"
-#
-#        try:
-#          row_user = filtrar_por("nombre",data['nombre'])
-#          row_email = filtrar_por("correo",data['correo'])
-#
-#          #current_user = row_user['nombre']
-#          #current_email = row_email['correo']
-#
-#          if row_user or row_email:
-#            return {'message':"El usuario o el correo ha sido usado"}
-#
-#          insert_usuario(data['nombre'],data['clave1'],data['correo'],data['apodo'],data['telefono'])
-#
-#          access_token = create_access_token(identity = data['nombre'])
-#          refresh_token = create_refresh_token(identity = data['nombre'])
-#          return {
-#              'message': 'El usuario {} se creó'.format(data['nombre']),
-#              'access_token': access_token,
-#              'refresh_token': refresh_token
-#          }
-#        except Exception as e:
-#          print(e)
-#          return {'message': 'Algo falló'}, 500
 
 class UserLogoutAccess(Resource):
   @jwt_required
@@ -154,10 +99,13 @@ class TokenRefresh(Resource):
 
 class AllUsers(Resource):
   def get(self):
-    return UserModel.return_all()
+    def to_json(x):
+      return {
+        'nombre': x.nombre,
+        'correo': x.correo
+      }   
+    return {'nombre': list(map(lambda x: to_json(x), UsuarioModel.query.all()))}
   
-  def delete(self):
-    return UserModel.delete_all() 
       
 class SecretResource(Resource):
     @jwt_required      

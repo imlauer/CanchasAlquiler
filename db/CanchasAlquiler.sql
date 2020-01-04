@@ -133,6 +133,6 @@ CREATE TABLE `LeGusta` (
 
 CREATE TABLE `revoked_tokens` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `jti` VARCHAR(120)
+  `jti` VARCHAR(120) NOT NULL,
   PRIMARY KEY (`id`)
 );

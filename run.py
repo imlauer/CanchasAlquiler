@@ -3,23 +3,15 @@ This is actually a simple, yet frustrating issue. The problem is you are importi
 '''
 
 from flask import Flask
-#from flask_restful import Api
-#from flask_jwt_extended import JWTManager
-#from flask_mysqldb import MySQL
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root123@localhost/CanchasAlquiler'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# MySQL configurations
-#app.config['MYSQL_HOST'] = '127.0.0.1'
-#app.config['MYSQL_USER'] = 'root'
-#app.config['MYSQL_PASSWORD'] = 'root123'
-#app.config['MYSQL_DB'] = 'CanchasAlquiler'
 
-mysql= SQLAlchemy(app)
+db = SQLAlchemy(app)
 
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
