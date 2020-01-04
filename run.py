@@ -36,5 +36,14 @@ api.add_resource(resources.UserLogin, '/login')
 api.add_resource(resources.UserLogoutAccess, '/logout/access')
 api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
 api.add_resource(resources.TokenRefresh, '/token/refresh')
+#######
 api.add_resource(resources.AllUsers, '/lista_usuarios')
 api.add_resource(resources.SecretResource, '/secret')
+####### Perfil
+#api.add_resource(resources.SecretResource, '/<string:usuario>/me_gusta')
+####### Lugar
+api.add_resource(resources.LugarDescripcion, '/lugar/<int:lugar_id>')
+#api.add_resource(resources.AddAlquiler, '/agregar_alquiler')
+api.add_resource(resources.AddPlace, '/agregar_lugar')
+#api.add_resource(resources.AgregarCancha, '/agregar_cancha')
+#api.add_resource(resources.AddSport, '/agregar_deporte')

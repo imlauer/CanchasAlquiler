@@ -104,11 +104,83 @@ class AllUsers(Resource):
         'correo': x.correo
       }   
     return {'nombre': list(map(lambda x: to_json(x), UsuarioModel.query.all()))}
-  
-      
+
+class LugarDescripcion(Resource):
+  def get(self,lugar_id):
+    current_place = LugarModel.query.get(lugar_id)
+    if not current_place:
+      return {'message':'id no existente'}
+
+    def to_json(x):
+      return { 
+        'lugar_id': x.id,
+        'nombre': x.nombre,
+        'anunciada':x.anunciada,
+        'bar':x.bar,
+        'preciodia':x.preciodia,
+        'precionoche':x.precionoche,
+        'incluye':x.incluye,
+        'fotoperfil':x.fotoperfil,
+        'fotoportada':x.fotoportada,
+        'estacionamiento':x.estacionamiento,
+        'parrilla':x.parrilla,
+        'ciudad':x.ciudad,
+        'provincia':x.provincia,
+        'total_likes':x.total_likes
+      }
+    return {'lugar':list(map(lambda x: to_json(x), LugarModel.query.get(lugar_id)))}
+
 class SecretResource(Resource):
     @jwt_required      
     def get(self):
         return {
             'answer': 42
         }
+
+class AddPlace(Resource):
+  @jwt_required
+  def post(self):
+    parser = reqparse.RequestParser()
+    parser.add_argument('lugar_id', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('nombre', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('anunciada', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('bar', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('preciodia', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('precionoche', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('incluye', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('fotoperfil', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('fotoportada', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('estacionamiento', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('parrilla', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('ciudad', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('provincia', help='Este campo no puede estar vacio', required=True)
+
+    data = parser.parse_args()   
+
+    if LugarModel.find_by_nombre(data['lugar_nombre']):
+      return {'message': 'Ese lugar ya existe'}
+    
+    nuevo_lugar = LugarModel (
+      nombre = data['lugar_nombre'],
+      owned = data['owner'],
+      anunciada = data['anunciada'],
+      bar = data['bar'],
+      preciodia = data['preciodia'],
+      precionoche = data['precionoche'],
+      incluye = data['incluye'],
+      fotoperfil = data['fotoperfil'],
+      fotoportada = data['fotoportada'],
+      estacionamiento = data['estacionamiento'],
+      parrila = data['parrila'],
+      ciudad = data['ciudad'],
+      provincia = data['provincia'],
+      total_likes = 0
+    )
+    try:
+      nuevo_lugar.save_to_db()
+      return {
+        'message': 'El lugar {} se ha guardado'.format(data['lugar_nombre'])
+      }
+    except Exception as e:
+      print(e)
+      return {'message':'Algo falló al agregar el lugar'},500

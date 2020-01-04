@@ -50,16 +50,9 @@ token_refresh(){
 }
 
 
-
-# faltan /logout/acess, /logout/refresh, /token/refresh, 
-
-
-
-
-
 #register
 #login
 #secret_sin_token_de_acceso
 #secret_
-#usuarios
-logout_access
+usuarios
+#logout_access
