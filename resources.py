@@ -109,7 +109,7 @@ class LugarDescripcion(Resource):
   def get(self,lugar_id):
     current_place = LugarModel.query.get(lugar_id)
     if not current_place:
-      return {'message':'id no existente'}
+      return {'message':'{} no existente'.format(lugar_id)}
 
     def to_json(x):
       return { 

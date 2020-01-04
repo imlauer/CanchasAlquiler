@@ -32,6 +32,10 @@ class LugarModel(db.Model):
       print(e)
       return {'message':'Algo falló'}
 
+  @classmethod
+  def find_by_nombre(cls, nombre):
+      return cls.query.filter_by(nombre = nombre).first()
+
   def save_to_db(self):
     db.session.add(self)
     db.session.commit() # this needed to write the changes to database
