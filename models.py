@@ -6,7 +6,6 @@ from flask_sqlalchemy import *
 class LugarModel(db.Model):
   __table_args__ = {'extend_existing': True}
   __tablename__ = 'Lugar'
-  #__table__ = db.Table('Lugar', db.metadata)
 
   id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
   owner = db.Column(db.String(length=60), nullable=False, unique=False)
@@ -25,6 +24,8 @@ class LugarModel(db.Model):
   ciudad = db.Column(db.String(length=100), nullable=False, unique=False)
   provincia = db.Column(db.String(length=100), nullable=False, unique=False)
   total_likes = db.Column(db.Integer, nullable=True, unique=False)
+
+  deportes = db.relationship('DeporteModel', backref='lugar')
 
   @classmethod
   def find_by_nombre(cls, nombre):
@@ -82,13 +83,14 @@ class UsuarioModel(db.Model):
                         self.nombre, self.correo, self.clave)
 
 
-class DeportesModel(db.Model):
+class DeporteModel(db.Model):
   __table_args__ = {'extend_existing': True}
   __tablaname__ = 'Deportes'
 
   id = db.Column(db.Integer, primary_key=True)
-  id_lugar = db.Column(db.Integer, nullable=False)
+  id_lugar = db.Column(db.Integer, db.ForeignKey('Lugar.id'))
   tipodeporte = db.Column(db.Text, nullable=False)
+
 
   def save_to_db(self):
     db.session.add(self)

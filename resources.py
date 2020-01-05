@@ -151,7 +151,7 @@ class AddSport(Resource):
     if not LugarModel.query.get(data['lugar_id']):
       return {'message':'No existe ese lugar'}
 
-    nuevo_deporte = DeportesModel (
+    nuevo_deporte = DeporteModel (
       id_lugar = data['lugar_id'],
       tipodeporte = data['tipo_deporte']
     )
