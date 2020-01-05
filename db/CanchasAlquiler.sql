@@ -37,6 +37,8 @@ CREATE TABLE `Lugar` (
   `estacionamiento` TINYINT UNSIGNED NULL,
   `parrilla` TINYINT UNSIGNED NULL, 
   `ciudad` VARCHAR(100) NOT NULL,
+  `telefono` VARCHAR(100) NOT NULL,
+  `correo_owner` VARCHAR(100) NOT NULL,
   `provincia` VARCHAR(100) NOT NULL,
   `total_likes` INT UNSIGNED NULL,
   PRIMARY KEY(`id`)
@@ -97,10 +99,11 @@ CREATE TABLE `HorarioAnulado` (
   If there are any record returned, those shops have alternate hours or are closed.
 */
 
-CREATE TABLE `PoseeDeportes` (
+CREATE TABLE `Deportes` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `id_lugar` INT UNSIGNED NOT NULL REFERENCES `Lugar`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  `tipodeporte` TEXT,
-  PRIMARY KEY (`id_lugar`)
+  `tipodeporte` TEXT NOT NULL,
+  PRIMARY KEY(`id`),
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 

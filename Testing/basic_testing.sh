@@ -50,9 +50,25 @@ token_refresh(){
 }
 
 
+add_place(){
+  curl --header "Content-Type: application/json" \
+    --request POST \
+    --data '{"lugar_nombre":"Futbol 5","owner":"Roberto Diaz","bar":1,"preciodia":100,"precionoche":311,"incluye":"Dos cervezas","fotoperfil":"sdfs","fotoportada":"asdf","estacionamiento":1,"parrila":1,"telefono":"23131","correo_owner":"saf@asdf.com","ciudad":"posadas","provincia":"misiones","parrilla":1}' \
+    http://localhost:5000/agregar_lugar
+}
+
+add_sport(){
+  curl --header "Content-Type: application/json" \
+    --request POST \
+    --data '{"lugar_id":1,"tipo_deporte":"Futbol"}' \
+    http://localhost:5000/agregar_deporte
+}
+
 #register
 #login
 #secret_sin_token_de_acceso
 #secret_
-usuarios
+#usuarios
 #logout_access
+#add_place
+add_sport

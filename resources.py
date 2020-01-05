@@ -106,6 +106,7 @@ class AllUsers(Resource):
     return {'nombre': list(map(lambda x: to_json(x), UsuarioModel.query.all()))}
 
 class LugarDescripcion(Resource):
+  # TODO: Buscar por nombre
   def get(self,lugar_id):
     current_place = LugarModel.query.get(lugar_id)
     if not current_place:
@@ -115,6 +116,7 @@ class LugarDescripcion(Resource):
       return { 
         'lugar_id': x.id,
         'nombre': x.nombre,
+        'owner': x.owner,
         'anunciada':x.anunciada,
         'bar':x.bar,
         'preciodia':x.preciodia,
@@ -128,7 +130,7 @@ class LugarDescripcion(Resource):
         'provincia':x.provincia,
         'total_likes':x.total_likes
       }
-    return {'lugar':list(map(lambda x: to_json(x), LugarModel.query.get(lugar_id)))}
+    return {'lugar': to_json(LugarModel.query.get(lugar_id))}
 
 class SecretResource(Resource):
     @jwt_required      
@@ -137,13 +139,43 @@ class SecretResource(Resource):
             'answer': 42
         }
 
-class AddPlace(Resource):
-  @jwt_required
+class AddSport(Resource):
+  #@jwt_required
   def post(self):
     parser = reqparse.RequestParser()
     parser.add_argument('lugar_id', help='Este campo no puede estar vacio', required=True)
-    parser.add_argument('nombre', help='Este campo no puede estar vacio', required=True)
-    parser.add_argument('anunciada', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('tipo_deporte', help='Este campo no puede estar vacio', required=True)
+
+    data = parser.parse_args()
+
+    if not LugarModel.query.get(data['lugar_id']):
+      return {'message':'No existe ese lugar'}
+
+    nuevo_deporte = DeportesModel (
+      id_lugar = data['lugar_id'],
+      tipodeporte = data['tipo_deporte']
+    )
+
+    try:
+      nuevo_deporte.save_to_db()
+      return {
+          'message': 'El deporte {} se ha agregado'.format(data['nombre']),
+      }
+    except Exception as e:
+      print(e)
+      return {'message': 'Algo falló'}, 500
+
+
+
+class AddPlace(Resource):
+  #jwt_required
+  def post(self):
+    parser = reqparse.RequestParser()
+    parser.add_argument('lugar_nombre', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('owner', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('telefono', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('correo_owner', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('anunciada', help='Este campo no puede estar vacio', required=False)
     parser.add_argument('bar', help='Este campo no puede estar vacio', required=True)
     parser.add_argument('preciodia', help='Este campo no puede estar vacio', required=True)
     parser.add_argument('precionoche', help='Este campo no puede estar vacio', required=True)
@@ -162,7 +194,7 @@ class AddPlace(Resource):
     
     nuevo_lugar = LugarModel (
       nombre = data['lugar_nombre'],
-      owned = data['owner'],
+      owner = data['owner'],
       anunciada = data['anunciada'],
       bar = data['bar'],
       preciodia = data['preciodia'],
@@ -171,7 +203,9 @@ class AddPlace(Resource):
       fotoperfil = data['fotoperfil'],
       fotoportada = data['fotoportada'],
       estacionamiento = data['estacionamiento'],
-      parrila = data['parrila'],
+      parrilla = data['parrilla'],
+      telefono = data['telefono'],
+      correo_owner = data['correo_owner'],
       ciudad = data['ciudad'],
       provincia = data['provincia'],
       total_likes = 0

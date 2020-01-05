@@ -44,6 +44,6 @@ api.add_resource(resources.SecretResource, '/secret')
 ####### Lugar
 api.add_resource(resources.LugarDescripcion, '/lugar/<int:lugar_id>')
 #api.add_resource(resources.AddAlquiler, '/agregar_alquiler')
-api.add_resource(resources.AddPlace, '/agregar_lugar')
+#api.add_resource(resources.AddPlace, '/agregar_lugar')
 #api.add_resource(resources.AgregarCancha, '/agregar_cancha')
-#api.add_resource(resources.AddSport, '/agregar_deporte')
+api.add_resource(resources.AddSport, '/agregar_deporte')
