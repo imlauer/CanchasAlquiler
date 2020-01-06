@@ -203,10 +203,13 @@ class AddRent(Resource):
       return {'message':'Dia de la semana no válido'}
 
     now = datetime.now()
+    # Nombre cliente.
+    current_user = get_jwt_identity()
+    current_user_id = UsuarioModel.query.find_by_nombre(current_user).id
 
     nuevo_alquiler = AlquilerModel (
       id_lugar = data['lugar_id'],
-      #id_persona_alquila = current_user.id, #hacerlo
+      id_persona_alquila = current_user_id,
       diadelasemana = date['diadelasemana'],
       fecha_peticion_realizada = now.strftime("%d/%m/%Y %H:%M:%S"),
       fechaalquiler = date['fechaalquiler'],
@@ -221,7 +224,7 @@ class AddRent(Resource):
       return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas'.format(data['lugar_id'],data['horacomienzo'],(data['horacomienzo']+timedelta(hours=date['tiempo'])).strftime("%H:%M:%S"))}
     except Exception as e:
       print(e)
-      return {'message': "Algo fue mal"}, 500
+      return {'message': "Algo exploto"}, 500
 
 
 

@@ -64,6 +64,16 @@ add_sport(){
     http://localhost:5000/agregar_deporte
 }
 
+# Ver tema de la fecha y hora comienzo
+add_alquiler(){
+  curl --header "Content-Type: application/json" \
+    --request POST \
+    --data '{"lugar_id":1,"diadelasemana":2,"fechaalquiler":"2020,12,1","horacomienzo":"2020,12,1","senado":150,"tiempo":3}' \
+    http://localhost:5000/agregar_alquiler
+}
+
+
+
 #register
 #login
 #secret_sin_token_de_acceso

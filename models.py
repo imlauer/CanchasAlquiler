@@ -25,8 +25,6 @@ class LugarModel(db.Model):
   provincia = db.Column(db.String(length=100), nullable=False, unique=False)
   total_likes = db.Column(db.Integer, nullable=True, unique=False)
 
-  
-
 
   @classmethod
   def find_by_nombre(cls, nombre):
