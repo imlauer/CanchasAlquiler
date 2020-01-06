@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 from passlib.hash import pbkdf2_sha256 as sha256
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
 from models import *
-from datetime import datetime
+from datetime import datetime,timedelta
 
 #Login
 parser_log = reqparse.RequestParser()
@@ -186,33 +186,48 @@ class AddRent(Resource):
   #@jwt_required
   def post(self):
     parser = reqparse.RequestParser()
-    parser.add_argument('lugar_id', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('id_lugar', type=int, help='Este campo no puede estar vacio', required=True)
     parser.add_argument('diadelasemana', type=int, help='Este campo no puede estar vacio', required=True)
     parser.add_argument('fechaalquiler', help='Este campo no puede estar vacio', required=True)
     # type=datetime significa que va a ejecutar datetime(horacomienzo) al argumento
-    parser.add_argument('horacomienzo', type=datetime,help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('horacomienzo', type=int,help='Este campo no puede estar vacio', required=True)
     parser.add_argument('senado',type=int, help='Este campo no puede estar vacio', required=True)
+    # Tiempo en horas.
     parser.add_argument('tiempo',type=int, help='Este campo no puede estar vacio', required=True)
 
     data = parser.parse_args()
 
-    if not LugarModel.query.get(data['lugar_id']):
+    if not LugarModel.query.get(data['id_lugar']):
       return {'message':'No existe ese lugar'}
 
-    if date['diadelasemana'] <0 or date['diadelasemana']>6:
+    def hora_from_int_to_string(hora_representacion_int):
+      hora = 0
+      if hora_representacion_int >= 60:
+        hora_representacion_int -= 60;
+        hora += 1
+      horacomienzo = timedelta(hours=hora, minutes=hora_representacion_int)
+      print("assf: %s" % horacomienzo)
+      return horacomienzo
+
+
+    if data['diadelasemana'] <0 or data['diadelasemana']>6:
       return {'message':'Dia de la semana no válido'}
 
     now = datetime.now()
     # Nombre cliente.
-    current_user = get_jwt_identity()
-    current_user_id = UsuarioModel.query.find_by_nombre(current_user).id
+    #current_user = get_jwt_identity()
+    current_user = "Acer_"
+    print("este es tu puto usuario: %s" % current_user)
+    current_user_id = UsuarioModel.find_by_nombre(current_user).id
 
-    nuevo_alquiler = AlquilerModel (
-      id_lugar = data['lugar_id'],
+    # Antes de agregar el alquiler, tengo que verificar si el local está abierto en ese
+    # horario y además TENGO que verificar si ya está alquilado
+    nuevo_alquiler = AlquilaLugarModel (
+      id_lugar = data['id_lugar'],
       id_persona_alquila = current_user_id,
-      diadelasemana = date['diadelasemana'],
-      fecha_peticion_realizada = now.strftime("%d/%m/%Y %H:%M:%S"),
-      fechaalquiler = date['fechaalquiler'],
+      diadelasemana = data['diadelasemana'],
+      fecha_peticion_realizada = now.strftime("%Y-%m-%d %H:%M:%S"),
+      fechaalquiler = data['fechaalquiler'],
       horacomienzo = data['horacomienzo'],
       senado = data['senado'],
       tiempo = data['tiempo']
@@ -221,7 +236,7 @@ class AddRent(Resource):
     try:
       nuevo_alquiler.save()
       # Cambiar todo a JSON
-      return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas'.format(data['lugar_id'],data['horacomienzo'],(data['horacomienzo']+timedelta(hours=date['tiempo'])).strftime("%H:%M:%S"))}
+      return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas, espera la confirmacion porque capaz que sos un hijo de puta y nos queres hacer quedar mal, Y POR gente como vos tenemos que hacer un sistema de confirmacion.'.format(data['id_lugar'],hora_from_int_to_string(data['horacomienzo']),str(hora_from_int_to_string(data['horacomienzo'])+timedelta(hours=data['tiempo'])))}
     except Exception as e:
       print(e)
       return {'message': "Algo exploto"}, 500

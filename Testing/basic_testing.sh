@@ -68,7 +68,7 @@ add_sport(){
 add_alquiler(){
   curl --header "Content-Type: application/json" \
     --request POST \
-    --data '{"lugar_id":1,"diadelasemana":2,"fechaalquiler":"2020,12,1","horacomienzo":"2020,12,1","senado":150,"tiempo":3}' \
+    --data '{"id_lugar":1,"diadelasemana":2,"fechaalquiler":"2020-01-15","horacomienzo":438,"senado":150,"tiempo":3}' \
     http://localhost:5000/agregar_alquiler
 }
 
@@ -81,4 +81,5 @@ add_alquiler(){
 #usuarios
 #logout_access
 #add_place
-add_sport
+#add_sport
+add_alquiler

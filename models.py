@@ -50,6 +50,7 @@ class UsuarioModel(db.Model):
 
   @classmethod
   def find_by_nombre(cls, nombre):
+      print(cls.query.filter_by(nombre = nombre).first())
       return cls.query.filter_by(nombre = nombre).first()
 
   @classmethod

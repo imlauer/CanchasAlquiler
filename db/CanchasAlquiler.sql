@@ -66,6 +66,15 @@ eg.
 60 = 01:00
 252 = 04:12
 
+from datetime import timedelta
+hora_int = 252
+hora = 0
+if hora >= 60:
+  hora_int-=60
+  hora+=1
+timedelta(hours=hora, minutes=hora_int)
+
+
 You would however need to write some code to reconstitute the time, but that shouldn't be tricky.
  */
 
@@ -112,9 +121,9 @@ CREATE TABLE `AlquilaLugar` (
   `id_persona_alquila` INT UNSIGNED NOT NULL REFERENCES `Usuario`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   `id_lugar` INT UNSIGNED NOT NULL REFERENCES `Lugar`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   `fecha_peticion_realizada` DATETIME,
-  `diadelasemana` INT UNSIGNED NULL, /* 0-6 */
-  `fechaalquiler` DATETIME,
-  `horacomienzo` DATETIME,
+  `diadelasemana` SMALLINT UNSIGNED NULL, /* 0-6 */
+  `fechaalquiler` DATE,
+  `horacomienzo` SMALLINT UNSIGNED NULL,
   `senado` INT UNSIGNED NOT NULL,
   `tiempo` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`)
