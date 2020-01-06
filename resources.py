@@ -148,22 +148,37 @@ class AddSport(Resource):
 
     data = parser.parse_args()
 
+    print(data['lugar_id'])
+    print(data['tipo_deporte'])
+
+
     if not LugarModel.query.get(data['lugar_id']):
       return {'message':'No existe ese lugar'}
 
+    row = DeporteModel.find_by_lugar(data['lugar_id'])
+    print(len(row))
+
+    invalido = 0
+    for i in range(0,len(row)):
+      print(row[i].tipo_deporte)
+      if row[i].tipo_deporte == data['tipo_deporte']:
+        invalido = 1
+
+    print(invalido)
+    if invalido:
+      return {'message':'Ese deporte ya existe'}
+
     nuevo_deporte = DeporteModel (
       id_lugar = data['lugar_id'],
-      tipodeporte = data['tipo_deporte']
+      tipo_deporte = data['tipo_deporte']
     )
 
     try:
-      nuevo_deporte.save_to_db()
-      return {
-          'message': 'El deporte {} se ha agregado'.format(data['nombre']),
-      }
+      nuevo_deporte.save()
+      return {'message': 'El deporte {} se ha agregado'.format(data['tipo_deporte'])}
     except Exception as e:
       print(e)
-      return {'message': 'Algo falló'}, 500
+      return {'message': "Algo fue mal"}, 500
 
 
 

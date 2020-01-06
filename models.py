@@ -25,7 +25,8 @@ class LugarModel(db.Model):
   provincia = db.Column(db.String(length=100), nullable=False, unique=False)
   total_likes = db.Column(db.Integer, nullable=True, unique=False)
 
-  deportes = db.relationship('DeporteModel', backref='lugar')
+  
+
 
   @classmethod
   def find_by_nombre(cls, nombre):
@@ -85,16 +86,20 @@ class UsuarioModel(db.Model):
 
 class DeporteModel(db.Model):
   __table_args__ = {'extend_existing': True}
-  __tablaname__ = 'Deportes'
+  __tablename__ = 'Deportes'
 
-  id = db.Column(db.Integer, primary_key=True)
-  id_lugar = db.Column(db.Integer, db.ForeignKey('Lugar.id'))
-  tipodeporte = db.Column(db.Text, nullable=False)
+  id = db.Column(db.Integer, primary_key=True) 
+  tipo_deporte = db.Column(db.String(50), nullable=False)
+  id_lugar = db.Column(db.Integer, db.ForeignKey('Lugar.id'), nullable=True)
+  #lugar = db.relationship('LugarModel', backref='deportes', foreign_keys=[id_lugar])
 
+  @classmethod
+  def find_by_lugar(cls, id_lugar):
+    return cls.query.filter_by(id_lugar = id_lugar).all()
 
-  def save_to_db(self):
+  def save(self):
     db.session.add(self)
-    db.session.commit() # this needed to write the changes to database
+    db.session.commit()
 
 class RevokedTokenModel(db.Model):
     # Creala si tira error
