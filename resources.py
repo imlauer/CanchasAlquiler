@@ -206,7 +206,10 @@ class AddRent(Resource):
 
     nuevo_alquiler = AlquilerModel (
       id_lugar = data['lugar_id'],
+      #id_persona_alquila = current_user.id, #hacerlo
+      diadelasemana = date['diadelasemana'],
       fecha_peticion_realizada = now.strftime("%d/%m/%Y %H:%M:%S"),
+      fechaalquiler = date['fechaalquiler'],
       horacomienzo = data['horacomienzo'],
       senado = data['senado'],
       tiempo = data['tiempo']
