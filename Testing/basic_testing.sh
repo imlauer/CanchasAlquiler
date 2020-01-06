@@ -60,7 +60,7 @@ add_place(){
 add_sport(){
   curl --header "Content-Type: application/json" \
     --request POST \
-    --data '{"lugar_id":1,"tipo_deporte":"futbol"}' \
+    --data '{"lugar_id":1,"tipo_deporte":"tenis"}' \
     http://localhost:5000/agregar_deporte
 }
 

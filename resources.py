@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from passlib.hash import pbkdf2_sha256 as sha256
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
 from models import *
+from datetime import datetime
 
 #Login
 parser_log = reqparse.RequestParser()
@@ -156,15 +157,12 @@ class AddSport(Resource):
       return {'message':'No existe ese lugar'}
 
     row = DeporteModel.find_by_lugar(data['lugar_id'])
-    print(len(row))
 
     invalido = 0
     for i in range(0,len(row)):
-      print(row[i].tipo_deporte)
       if row[i].tipo_deporte == data['tipo_deporte']:
         invalido = 1
 
-    print(invalido)
     if invalido:
       return {'message':'Ese deporte ya existe'}
 
@@ -176,6 +174,48 @@ class AddSport(Resource):
     try:
       nuevo_deporte.save()
       return {'message': 'El deporte {} se ha agregado'.format(data['tipo_deporte'])}
+    except Exception as e:
+      print(e)
+      return {'message': "Algo fue mal"}, 500
+
+class AddRent(Resource):
+  '''
+    Agregar campo para agregar si están o no de vacaciones,
+    la lógica del horario anulado, todavía no está implementada.
+  '''
+  #@jwt_required
+  def post(self):
+    parser = reqparse.RequestParser()
+    parser.add_argument('lugar_id', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('diadelasemana', type=int, help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('fechaalquiler', help='Este campo no puede estar vacio', required=True)
+    # type=datetime significa que va a ejecutar datetime(horacomienzo) al argumento
+    parser.add_argument('horacomienzo', type=datetime,help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('senado',type=int, help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('tiempo',type=int, help='Este campo no puede estar vacio', required=True)
+
+    data = parser.parse_args()
+
+    if not LugarModel.query.get(data['lugar_id']):
+      return {'message':'No existe ese lugar'}
+
+    if date['diadelasemana'] <0 or date['diadelasemana']>6:
+      return {'message':'Dia de la semana no válido'}
+
+    now = datetime.now()
+
+    nuevo_alquiler = AlquilerModel (
+      id_lugar = data['lugar_id'],
+      fecha_peticion_realizada = now.strftime("%d/%m/%Y %H:%M:%S"),
+      horacomienzo = data['horacomienzo'],
+      senado = data['senado'],
+      tiempo = data['tiempo']
+    )
+
+    try:
+      nuevo_alquiler.save()
+      # Cambiar todo a JSON
+      return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas'.format(data['lugar_id'],data['horacomienzo'],(data['horacomienzo']+timedelta(hours=date['tiempo'])).strftime("%H:%M:%S"))}
     except Exception as e:
       print(e)
       return {'message': "Algo fue mal"}, 500

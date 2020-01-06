@@ -108,16 +108,16 @@ CREATE TABLE `Deportes` (
 
 /****** ACCIONES DEL USUARIO ******/
 CREATE TABLE `AlquilaLugar` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `id_persona_alquila` INT UNSIGNED NOT NULL REFERENCES `Usuario`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   `id_lugar` INT UNSIGNED NOT NULL REFERENCES `Lugar`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   `fecha_peticion_realizada` DATETIME,
-  `diadelasemana` INT UNSIGNED NULL,
+  `diadelasemana` INT UNSIGNED NULL, /* 0-6 */
   `fechaalquiler` DATETIME,
-  `horacomienzo` INT NULL,
-  `horafinal` INT NULL,
+  `horacomienzo` DATETIME,
   `senado` INT UNSIGNED NOT NULL,
-  `tiempo_a_alquilar` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`id_persona_alquila`, `id_lugar`)
+  `tiempo` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `PoseeEquipo` (

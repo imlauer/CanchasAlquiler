@@ -83,6 +83,22 @@ class UsuarioModel(db.Model):
     return "<Usuario(nombre='{0}', correo='{1}', clave='{2}')>".format(
                         self.nombre, self.correo, self.clave)
 
+class AlquilaLugarModel(db.Model):
+  __tablename__ = 'AlquilaLugar'
+  __table_args__ = {
+      'autoload': True,
+      'schema': 'CanchasAlquiler',
+      'autoload_with': db.engine
+  }
+
+  @classmethod
+  def find_by_lugar(cls, id_lugar):
+    return cls.query.filter_by(id_lugar = id_lugar).all()
+
+  def save(self):
+    db.session.add(self)
+    db.session.commit()
+
 
 class DeporteModel(db.Model):
   __table_args__ = {'extend_existing': True}
@@ -91,7 +107,6 @@ class DeporteModel(db.Model):
   id = db.Column(db.Integer, primary_key=True) 
   tipo_deporte = db.Column(db.String(50), nullable=False)
   id_lugar = db.Column(db.Integer, db.ForeignKey('Lugar.id'), nullable=True)
-  #lugar = db.relationship('LugarModel', backref='deportes', foreign_keys=[id_lugar])
 
   @classmethod
   def find_by_lugar(cls, id_lugar):
