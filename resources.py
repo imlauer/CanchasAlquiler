@@ -269,6 +269,27 @@ class AddRent(Resource):
       print(e)
       return {'message': "Algo exploto"}, 500
 
+class Reservas(Resource):
+  #jwt_required
+  def post(self):
+    # Nombre cliente.
+    #current_user = get_jwt_identity()
+    current_user = "Acer_"
+    current_user_id = UsuarioModel.find_by_nombre(current_user).id_persona_alquila
+
+    def to_json(x):
+      return {
+        'id_lugar': x.id_lugar,
+        'fecha_alquilado': x.fechaalquiler,
+        'diadelasemana': x.diadelasemana,
+        'senado':x.senado,
+        'tiempo':x.tiempo,
+        'confirmado':x.confirmado,
+      }
+
+    return {'alquiler': list(map(lambda x: to_json(x), AlquilaLugar.query.gets(id_persona_alquila).all()))}
+
+
 class AddPlace(Resource):
   #jwt_required
   def post(self):
