@@ -101,9 +101,13 @@ class AlquilaLugarModel(db.Model):
   }
 
   @classmethod
+  def find_by_id_usuario(cls, id_persona_alquila):
+    return cls.query.filter_by(id_persona_alquila = id_persona_alquila).all()
+
+  @classmethod
   def find_by_lugar(cls, id_lugar):
     return cls.query.filter_by(id_lugar = id_lugar).all()
-
+  @classmethod
   def verificar_alquiler(cls, id_lugar, fecha, hora):
     return cls.query.filter_by(id_lugar=id_lugar, fechaalquiler=fecha, horacomienzo=hora).first()
 

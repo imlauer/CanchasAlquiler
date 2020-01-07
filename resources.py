@@ -270,12 +270,13 @@ class AddRent(Resource):
       return {'message': "Algo exploto"}, 500
 
 class Reservas(Resource):
-  #jwt_required
+  # Versión prueba
+  #@jwt_required
   def post(self):
     # Nombre cliente.
     #current_user = get_jwt_identity()
     current_user = "Acer_"
-    current_user_id = UsuarioModel.find_by_nombre(current_user).id_persona_alquila
+    current_user_id = UsuarioModel.find_by_nombre(nombre = current_user).id
 
     def to_json(x):
       return {
