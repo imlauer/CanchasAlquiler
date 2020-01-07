@@ -104,6 +104,9 @@ class AlquilaLugarModel(db.Model):
   def find_by_lugar(cls, id_lugar):
     return cls.query.filter_by(id_lugar = id_lugar).all()
 
+  def verificar_alquiler(cls, id_lugar, fecha, hora):
+    return cls.query.filter_by(id_lugar=id_lugar, fechaalquiler=fecha, horacomienzo=hora).first()
+
   def save(self):
     db.session.add(self)
     db.session.commit()
@@ -126,7 +129,6 @@ class DeporteModel(db.Model):
     db.session.commit()
 
 class RevokedTokenModel(db.Model):
-    # Creala si tira error
     __tablename__ = 'revoked_tokens'
     id = db.Column(db.Integer, primary_key = True)
     jti = db.Column(db.String(120))

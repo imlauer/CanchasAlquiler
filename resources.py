@@ -13,22 +13,13 @@ from datetime import datetime,timedelta
   EJEMPLO: abro el complejo plimplim y que me muestre los horarios q tienen libre
 '''
 
-#Login
-parser_log = reqparse.RequestParser()
-parser_log.add_argument('nombre', help = 'Este campo no puede estar vacio', required = True)
-parser_log.add_argument('clave', help = 'Este campo no puede estar vacio', required = True)
-#Register
-parser_reg = reqparse.RequestParser()
-parser_reg.add_argument('nombre', help = 'Este campo no puede estar vacio', required = True)
-parser_reg.add_argument('clave1', help = 'Este campo no puede estar vacio', required = True)
-parser_reg.add_argument('clave2', help = 'Este campo no puede estar vacio', required = True)
-parser_reg.add_argument('correo', help = 'Este campo no puede estar vacio', required = True)
-parser_reg.add_argument('apodo', help = 'Este campo no puede estar vacio', required = True)
-parser_reg.add_argument('telefono', help = 'Este campo no puede estar vacio', required = False)
-
 class UserLogin(Resource):
   def post(self):
-    data = parser_log.parse_args()
+    parser = reqparse.RequestParser()
+    parser.add_argument('nombre', help = 'Este campo no puede estar vacio', required = True)
+    parser.add_argument('clave', help = 'Este campo no puede estar vacio', required = True)
+
+    data = parser.parse_args()
     current_user = UsuarioModel.find_by_nombre(data['nombre'])
 
     if not current_user:
@@ -47,8 +38,15 @@ class UserLogin(Resource):
 
 class UserRegistration(Resource):
   def post(self):
+    parser = reqparse.RequestParser()
+    parser.add_argument('nombre', help = 'Este campo no puede estar vacio', required = True)
+    parser.add_argument('clave1', help = 'Este campo no puede estar vacio', required = True)
+    parser.add_argument('clave2', help = 'Este campo no puede estar vacio', required = True)
+    parser.add_argument('correo', help = 'Este campo no puede estar vacio', required = True)
+    parser.add_argument('apodo', help = 'Este campo no puede estar vacio', required = True)
+    parser.add_argument('telefono', help = 'Este campo no puede estar vacio', required = False)
 
-    data = parser_reg.parse_args()
+    data = parser.parse_args()
     if data['clave1'] != data['clave2']:
       return {'message':'Las claves no coinciden'}
     if UsuarioModel.find_by_nombre(data['nombre']) or UsuarioModel.find_by_correo(data['correo']):
@@ -158,10 +156,6 @@ class AddSport(Resource):
 
     data = parser.parse_args()
 
-    print(data['lugar_id'])
-    print(data['tipo_deporte'])
-
-
     if not LugarModel.query.get(data['lugar_id']):
       return {'message':'No existe ese lugar'}
 
@@ -228,7 +222,7 @@ class AddRent(Resource):
 
 
     if data['diadelasemana'] <0 or data['diadelasemana']>6:
-      return {'message':'Dia de la semana no válido'}
+      return {'message':'Dia de la semana no válido'},500
 
     now = datetime.now()
     # Nombre cliente.
@@ -238,15 +232,20 @@ class AddRent(Resource):
 
     # Antes de agregar el alquiler, tengo que verificar si el local está abierto en ese
     # horario y además TENGO que verificar si ya está alquilado
-
-    horariocomienzo
-
     DataHorario = HorarioModel.query.gets(id_lugar)
 
-    hora_apertura = DataHorario.horadeapertura_dia
-    hora_cierre = DataHorario.horadecierre_dia
-    if HorarioModel.find_by_fecha(horariocomienzo):
-      return {'message':'Horario no disponible'}
+    horario_invalido = 0
+    if data['horacomienzo'] >= DataHorario.horadeapertura_dia and data['horacomienzo'] <= DataHorario.horadeapertura_dia:
+      horario_invalido = 1
+    elif data['horacomienzo'] >= DataHorario.hora_apertura_noche and data['horacomienzo'] <= DataHorario.horadeapertura_noche:
+      horario_invalido = 1
+
+    if horario_invalido:
+      return {'message':'Horario invalido'},500
+
+    # Verifico si ya está alquilado, probablemente estén mal los tipos después los corrijo.
+    if AlquilaLugarModel.verificar_alquiler(id_lugar,data['fechaalquilar'],data['horacomienzo']):
+      return {'message':'Horario no disponible'},500
 
     nuevo_alquiler = AlquilaLugarModel (
       id_lugar = data['id_lugar'],
@@ -257,19 +256,18 @@ class AddRent(Resource):
       horacomienzo = data['horacomienzo'],
       senado = data['senado'],
       tiempo = data['tiempo'],
-      # Los de la administracion te lo tienen que confirmar.
+      # Desde el sistema de gestión del club te lo tienen que confirmar.
       confirmado = 0
     )
 
     try:
       nuevo_alquiler.save()
       # Cambiar todo a una lista, con sus correspondientes variables. 
-      return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas, espera la confirmacion porque capaz que sos un hijo de puta y nos queres hacer quedar mal, Y POR gente como vos tenemos que hacer un sistema de confirmacion.'.format(data['id_lugar'],hora_from_int_to_string(data['horacomienzo']),str(hora_from_int_to_string(data['horacomienzo'])+timedelta(hours=data['tiempo'])))}
+      return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas, espera la confirmacion porque capaz que sos un hijo de puta y nos queres hacer quedar mal, y por gente como vos tenemos que hacer un sistema de confirmacion.'.format(data['id_lugar'],hora_from_int_to_string(data['horacomienzo']),str(hora_from_int_to_string(data['horacomienzo'])+timedelta(hours=data['tiempo'])))}
+
     except Exception as e:
       print(e)
       return {'message': "Algo exploto"}, 500
-
-
 
 class AddPlace(Resource):
   #jwt_required

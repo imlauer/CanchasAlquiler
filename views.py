@@ -3,4 +3,4 @@ from flask import jsonify
 
 @app.route('/')
 def index():
-    return jsonify({'message': 'soijfdioj sólo una prueba!'})
+  return jsonify({'message': 'Acá se debería ver una básica estadística del usuario.'})
