@@ -81,8 +81,11 @@ You would however need to write some code to reconstitute the time, but that sho
 CREATE TABLE `HorarioNormal` (
   `id_lugar` INT UNSIGNED NOT NULL REFERENCES `Lugar`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   `diadelaSemana` SMALLINT UNSIGNED NULL, /* 0-6 */
-  `horadeapertura` INT NULL,
-  `horadecierre` INT NULL
+  `horadeapertura_dia` INT NULL,
+  `horadecierre_dia` INT NULL,
+  `horadeapertura_tarde` INT NULL,
+  `horadecierre_tarde` INT NULL,
+  `vacaciones` TINYINT UNSIGNED NULL
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `HorarioAnulado` (
@@ -126,6 +129,7 @@ CREATE TABLE `AlquilaLugar` (
   `horacomienzo` SMALLINT UNSIGNED NULL,
   `senado` INT UNSIGNED NOT NULL,
   `tiempo` INT UNSIGNED NOT NULL,
+  `confirmado` TINYINT UNSIGNED NULL
   PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

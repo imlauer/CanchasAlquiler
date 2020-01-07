@@ -4,6 +4,15 @@ from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_r
 from models import *
 from datetime import datetime,timedelta
 
+'''
+  Debería haber alguna forma de que te confirmen el turno para estar 100% seguros de que esta reservado el lugar! 
+  Ya veremos si funciona!
+
+
+  Deberían dejar visualizar los turnos libres por lugar.
+  EJEMPLO: abro el complejo plimplim y que me muestre los horarios q tienen libre
+'''
+
 #Login
 parser_log = reqparse.RequestParser()
 parser_log.add_argument('nombre', help = 'Este campo no puede estar vacio', required = True)
@@ -180,8 +189,10 @@ class AddSport(Resource):
 
 class AddRent(Resource):
   '''
-    Agregar campo para agregar si están o no de vacaciones,
+    Agregar campo para agregar si están o no de vacaciones en la tabla de Horarios.
     la lógica del horario anulado, todavía no está implementada.
+    En vez de buscar por horario, directamente mostrar los turnos disponibles y que
+    se pueda elegir de ahí.
   '''
   #@jwt_required
   def post(self):
@@ -200,13 +211,19 @@ class AddRent(Resource):
     if not LugarModel.query.get(data['id_lugar']):
       return {'message':'No existe ese lugar'}
 
+    if data['horacomienzo'] > 1440 or data['horacomienzo'] < 0:
+      return {'message':'Hora invalida'}
+
+    # Sólo acepto horas sin minutos.
+    if data['horacomiezo'] % 60 != 0:
+      return {'message':'Hora invalida'}
+
     def hora_from_int_to_string(hora_representacion_int):
       hora = 0
       if hora_representacion_int >= 60:
-        hora_representacion_int -= 60;
+        hora_representacion_int -= 60
         hora += 1
       horacomienzo = timedelta(hours=hora, minutes=hora_representacion_int)
-      print("assf: %s" % horacomienzo)
       return horacomienzo
 
 
@@ -217,11 +234,20 @@ class AddRent(Resource):
     # Nombre cliente.
     #current_user = get_jwt_identity()
     current_user = "Acer_"
-    print("este es tu puto usuario: %s" % current_user)
     current_user_id = UsuarioModel.find_by_nombre(current_user).id
 
     # Antes de agregar el alquiler, tengo que verificar si el local está abierto en ese
     # horario y además TENGO que verificar si ya está alquilado
+
+    horariocomienzo
+
+    DataHorario = HorarioModel.query.gets(id_lugar)
+
+    hora_apertura = DataHorario.horadeapertura_dia
+    hora_cierre = DataHorario.horadecierre_dia
+    if HorarioModel.find_by_fecha(horariocomienzo):
+      return {'message':'Horario no disponible'}
+
     nuevo_alquiler = AlquilaLugarModel (
       id_lugar = data['id_lugar'],
       id_persona_alquila = current_user_id,
@@ -230,12 +256,14 @@ class AddRent(Resource):
       fechaalquiler = data['fechaalquiler'],
       horacomienzo = data['horacomienzo'],
       senado = data['senado'],
-      tiempo = data['tiempo']
+      tiempo = data['tiempo'],
+      # Los de la administracion te lo tienen que confirmar.
+      confirmado = 0
     )
 
     try:
       nuevo_alquiler.save()
-      # Cambiar todo a JSON
+      # Cambiar todo a una lista, con sus correspondientes variables. 
       return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas, espera la confirmacion porque capaz que sos un hijo de puta y nos queres hacer quedar mal, Y POR gente como vos tenemos que hacer un sistema de confirmacion.'.format(data['id_lugar'],hora_from_int_to_string(data['horacomienzo']),str(hora_from_int_to_string(data['horacomienzo'])+timedelta(hours=data['tiempo'])))}
     except Exception as e:
       print(e)
@@ -286,6 +314,8 @@ class AddPlace(Resource):
       provincia = data['provincia'],
       total_likes = 0
     )
+    # Agregar el horario
+
     try:
       nuevo_lugar.save_to_db()
       return {
