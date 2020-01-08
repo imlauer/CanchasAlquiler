@@ -265,7 +265,7 @@ class AddRent(Resource):
     try:
       nuevo_alquiler.save()
       # Cambiar todo a una lista, con sus correspondientes variables. 
-      return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas, espera la confirmacion porque capaz que sos un hijo de puta y nos queres hacer quedar mal, y por gente como vos tenemos que hacer un sistema de confirmacion.'.format(data['id_lugar'],hora_from_int_to_string(data['horacomienzo']),str(hora_from_int_to_string(data['horacomienzo'])+timedelta(hours=data['tiempo'])))}
+      return {'message': 'El lugar {} se ha alquilado a las {} horas hasta las {} horas, espera la confirmacion.'.format(data['id_lugar'],hora_from_int_to_string(data['horacomienzo']),str(hora_from_int_to_string(data['horacomienzo'])+timedelta(hours=data['tiempo'])))}
 
     except Exception as e:
       print(e)
@@ -283,7 +283,7 @@ class Reservas(Resource):
     list_ = AlquilaLugarModel.query.get(current_user_id)
     
     if list_ == None:
-      return {'message':'No hay ninguna reserva hecha'}
+      return {'message':'No posee ninguna reserva hecha.'}
 
     def to_json(x):
       return {

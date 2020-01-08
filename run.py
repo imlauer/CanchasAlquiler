@@ -31,22 +31,36 @@ def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
     return models.RevokedTokenModel.is_jti_blacklisted(jti)
 
+
+##### Autenticación
 api.add_resource(resources.UserRegistration, '/registration')
 api.add_resource(resources.UserLogin, '/login')
 api.add_resource(resources.UserLogoutAccess, '/logout/access')
 api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
-
 api.add_resource(resources.TokenRefresh, '/token/refresh')
-#######
+
+###### General
+api.add_resource(resources.Reservas,'/misreservas')
+api.add_resource(resources.Reservas,'/info')
+api.add_resource(resources.LugarDescripcion, '/lugar/<int:lugar_id>')
 api.add_resource(resources.AllUsers, '/lista_usuarios')
 api.add_resource(resources.SecretResource, '/secret')
-####### Perfil
+
+####### Acciones de usuario (faltan implementar)
 #api.add_resource(resources.SecretResource, '/<string:usuario>/me_gusta')
-####### Lugar
-api.add_resource(resources.LugarDescripcion, '/lugar/<int:lugar_id>')
+#api.add_resource(resources.SecretResource, '/<string:usuario>/denuncias')
+#api.add_resource(resources.SecretResource, '/<int:lugar>/denunciar')
+#api.add_resource(resources.SecretResource, '/<int:lugar>/corazon')
 api.add_resource(resources.AddRent, '/agregar_alquiler')
-#api.add_resource(resources.AddPlace, '/agregar_lugar')
-#api.add_resource(resources.AgregarCancha, '/agregar_cancha')
+# Lo voy a cambiar por este:
+#api.add_resource(resources.AddRent, '/<int:lugar_id>/alquilar')
+
+###### Acciones administrador
 api.add_resource(resources.AddSport, '/agregar_deporte')
-api.add_resource(resources.Reservas,'/misreservas')
+# Lo voy a cambiar por este:
+#api.add_resource(resources.AddSport, '/<int:lugar>/agregar_deporte')
+
+#api.add_resource(resources.AgregarCancha, '/<int:lugar>/agregar_cancha')
 api.add_resource(resources.AddHorario,'/agregar_horario')
+# Lo voy a cambiar por:
+#api.add_resource(resources.AddHorario,'/<int:lugar>/agregar_horario')
