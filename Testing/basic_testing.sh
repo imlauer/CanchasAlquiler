@@ -53,7 +53,7 @@ token_refresh(){
 add_place(){
   curl --header "Content-Type: application/json" \
     --request POST \
-    --data '{"lugar_nombre":"Futbol 5","owner":"Roberto Diaz","bar":1,"preciodia":100,"precionoche":311,"incluye":"Dos cervezas","fotoperfil":"sdfs","fotoportada":"asdf","estacionamiento":1,"parrila":1,"telefono":"23131","correo_owner":"saf@asdf.com","ciudad":"posadas","provincia":"misiones","parrilla":1}' \
+    --data '{"lugar_nombre":"Futbol 5","owner":"Roberto Diaz","bar":1,"preciodia":100,"precionoche":311,"incluye":"Dos cervezas","fotoperfil":"sdfs","fotoportada":"asdf","estacionamiento":1,"parrila":1,"telefono":"23131","correo_owner":"saf@asdf.com","ciudad":"posadas","provincia":"misiones","parrilla":1,"diadelasemana":2,"horaapertura_dia":65,"horacierre_dia"}' \
     http://localhost:5000/agregar_lugar
 }
 
@@ -72,6 +72,17 @@ add_alquiler(){
     http://localhost:5000/agregar_alquiler
 }
 
+agregar_horario(){
+  curl --header "Content-Type: application/json" \
+    --request POST \
+    --data '{"id_lugar":1,"diadelasemana":3,"horadeapertura_dia":420,"horadecierre_dia":720,"horadeapertura_tarde":900,"horadecierre_tarde":1200}' \
+    http://localhost:5000/agregar_horario
+}
+
+
+reservas(){
+  curl http://localhost:5000/misreservas
+}
 
 
 #register
@@ -82,4 +93,6 @@ add_alquiler(){
 #logout_access
 #add_place
 #add_sport
-add_alquiler
+#add_alquiler
+agregar_horario
+#reservas

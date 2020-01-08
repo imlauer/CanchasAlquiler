@@ -25,6 +25,17 @@ from flask_sqlalchemy import *
 #  provincia = db.Column(db.String(length=100), nullable=False, unique=False)
 #  total_likes = db.Column(db.Integer, nullable=True, unique=False)
 
+class HorarioModel(db.Model):
+  __tablename__ = 'HorarioNormal'
+  __table_args__ = {
+      'autoload': True,
+      'schema': 'CanchasAlquiler',
+      'autoload_with': db.engine
+  }
+  def save_to_db(self):
+    db.session.add(self)
+    db.session.commit() # this needed to write the changes to database
+
 class LugarModel(db.Model):
   __tablename__ = 'Lugar'
   __table_args__ = { 

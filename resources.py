@@ -234,10 +234,12 @@ class AddRent(Resource):
     # horario y además TENGO que verificar si ya está alquilado
     DataHorario = HorarioModel.query.gets(id_lugar)
 
+    
+
     horario_invalido = 0
     if data['horacomienzo'] >= DataHorario.horadeapertura_dia and data['horacomienzo'] <= DataHorario.horadeapertura_dia:
       horario_invalido = 1
-    elif data['horacomienzo'] >= DataHorario.hora_apertura_noche and data['horacomienzo'] <= DataHorario.horadeapertura_noche:
+    if data['horacomienzo'] >= DataHorario.hora_apertura_tarde and data['horacomienzo'] <= DataHorario.horadeapertura_tarde:
       horario_invalido = 1
 
     if horario_invalido:
@@ -272,11 +274,16 @@ class AddRent(Resource):
 class Reservas(Resource):
   # Versión prueba
   #@jwt_required
-  def post(self):
+  def get(self):
     # Nombre cliente.
     #current_user = get_jwt_identity()
     current_user = "Acer_"
     current_user_id = UsuarioModel.find_by_nombre(nombre = current_user).id
+
+    list_ = AlquilaLugarModel.query.get(current_user_id)
+    
+    if list_ == None:
+      return {'message':'No hay ninguna reserva hecha'}
 
     def to_json(x):
       return {
@@ -288,8 +295,48 @@ class Reservas(Resource):
         'confirmado':x.confirmado,
       }
 
-    return {'alquiler': list(map(lambda x: to_json(x), AlquilaLugar.query.gets(id_persona_alquila).all()))}
+    return {'alquiler': list(map(lambda x: to_json(x), AlquilaLugarModel.query.get(current_user_id)))}
 
+'''
+class AddVacaciones(Resource):
+  def post(self):
+    parser = reqparse.RequestParser()
+'''
+
+class AddHorario(Resource):
+  def post(self):
+    parser = reqparse.RequestParser()
+    parser.add_argument('id_lugar', help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('diadelasemana', type=int, help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('horadeapertura_dia', type=int, help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('horadecierre_dia', type=int, help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('horadeapertura_tarde',type=int, help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('horadecierre_tarde',type=int, help='Este campo no puede estar vacio', required=True)
+
+    data = parser.parse_args()   
+
+    lugar_horario = HorarioModel (
+      id_lugar = data['id_lugar'],
+      diadelasemana = data['diadelasemana'],
+      horadeapertura_dia = data['horadeapertura_dia'],
+      horadecierre_dia = data['horadecierre_dia'],
+      horadeapertura_tarde = data['horadeapertura_tarde'],
+      horadecierre_tarde = data['horadecierre_tarde'],
+      vacaciones = 0
+    )
+
+    if HorarioModel.query.get(data['id_lugar']):
+      print(HorarioModel.query.get(data['id_lugar']))
+      return {'message': 'Ese lugar ya posee un horario definido, si desea cambiarlo use /cambiar(no definido)'}
+
+    try:
+      lugar_horario.save_to_db()
+      return {
+        'message': 'El horario al lugar {} se ha guardado'.format(data['id_lugar'])
+      }
+    except Exception as e:
+      print(e)
+      return {'message':'Algo falló al agregar el lugar'},500
 
 class AddPlace(Resource):
   #jwt_required
@@ -311,7 +358,6 @@ class AddPlace(Resource):
     parser.add_argument('ciudad', help='Este campo no puede estar vacio', required=True)
     parser.add_argument('provincia', help='Este campo no puede estar vacio', required=True)
 
-    data = parser.parse_args()   
 
     if LugarModel.find_by_nombre(data['lugar_nombre']):
       return {'message': 'Ese lugar ya existe'}
@@ -334,7 +380,6 @@ class AddPlace(Resource):
       provincia = data['provincia'],
       total_likes = 0
     )
-    # Agregar el horario
 
     try:
       nuevo_lugar.save_to_db()
