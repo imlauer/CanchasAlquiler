@@ -453,7 +453,7 @@ class InfoUsuario(Resource):
         'nombre': x.nombre,
         'correo': x.correo
       }   
-    return {'nombre': list(map(lambda x: to_json(x), UsuarioModel.find_by_nombre(nombre)))}
+    return {'nombre': to_json(UsuarioModel.find_by_nombre(nombre))}
 
 
 
