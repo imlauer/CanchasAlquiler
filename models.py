@@ -2,28 +2,28 @@ from passlib.hash import pbkdf2_sha256 as sha256
 from run import db
 from flask_sqlalchemy import *
 
+class DenunciarModel(db.Model):
+  __tablename__ = 'Denuncias'
+  __table_args__ = {
+      'autoload': True,
+      'schema': 'CanchasAlquiler',
+      'autoload_with': db.engine
+  }
+  def save_to_db(self):
+    db.session.add(self)
+    db.session.commit() 
 
-#class LugarModel(db.Model):
-#  __table_args__ = {'extend_existing': True}
-#  __tablename__ = 'Lugar'
-#
-#  id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-#  owner = db.Column(db.String(length=60), nullable=False, unique=False)
-#  nombre =  db.Column(db.String(length=100), nullable=False, unique=False)
-#  correo_owner =  db.Column(db.String(length=100), nullable=False, unique=False)
-#  anunciada = db.Column(db.String(length=100), nullable=True, unique=False)
-#  bar =  db.Column(db.String(length=50), nullable=True, unique=False)
-#  preciodia = db.Column(db.Integer, nullable=False, unique=False)
-#  precionoche = db.Column(db.Integer, nullable=False, unique=False)
-#  incluye = db.Column(db.String(length=250), nullable=False, unique=False)
-#  fotoperfil = db.Column(db.String, nullable=False, unique=False)
-#  fotoportada = db.Column(db.String, nullable=False, unique=False)
-#  estacionamiento = db.Column(db.Integer, nullable=True, unique=False)
-#  parrilla = db.Column(db.Integer, nullable=True, unique=False)
-#  telefono = db.Column(db.String(length=100), nullable=False, unique=False)
-#  ciudad = db.Column(db.String(length=100), nullable=False, unique=False)
-#  provincia = db.Column(db.String(length=100), nullable=False, unique=False)
-#  total_likes = db.Column(db.Integer, nullable=True, unique=False)
+
+class LeGustaModel(db.Model):
+  __tablename__ = 'HorarioNormal'
+  __table_args__ = {
+      'autoload': True,
+      'schema': 'CanchasAlquiler',
+      'autoload_with': db.engine
+  }
+  def save_to_db(self):
+    db.session.add(self)
+    db.session.commit() 
 
 class HorarioModel(db.Model):
   __tablename__ = 'HorarioNormal'
@@ -34,7 +34,7 @@ class HorarioModel(db.Model):
   }
   def save_to_db(self):
     db.session.add(self)
-    db.session.commit() # this needed to write the changes to database
+    db.session.commit()
 
 class LugarModel(db.Model):
   __tablename__ = 'Lugar'
@@ -50,19 +50,10 @@ class LugarModel(db.Model):
 
   def save_to_db(self):
     db.session.add(self)
-    db.session.commit() # this needed to write the changes to database
+    db.session.commit() 
 
 
 class UsuarioModel(db.Model):
-  #id =     db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-  #nombre = db.Column(db.String(length=60), nullable=False, unique=False)
-  #clave =  db.Column(db.String(length=100), nullable=False, unique=False)
-  #correo = db.Column(db.String(length=100), nullable=False, unique=False)
-  #apodo =  db.Column(db.String(length=50), nullable=False, unique=False)
-  #tipo_usuario = db.Column(db.Integer, nullable=False, unique=False)
-  #telefono = db.Column(db.String(length=100), nullable=False, unique=False)
-  #numero_reservas = db.Column(db.Integer, nullable=True, unique=False)
-
   __tablename__ = 'Usuario'
   __table_args__ = { 
       'autoload': True,
