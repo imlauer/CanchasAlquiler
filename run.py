@@ -33,12 +33,6 @@ def check_if_token_in_blacklist(decrypted_token):
     return models.RevokedTokenModel.is_jti_blacklisted(jti)
 
 
-
-
-
-
-
-
 ''' Autenticación '''
 api.add_resource(resources.UserRegistration, '/registration')
 api.add_resource(resources.UserLogin, '/login')
@@ -52,12 +46,12 @@ api.add_resource(resources.LugarDescripcion,'/info/lugar/<int:lugar_id>')
 api.add_resource(resources.InfoUsuario,'/info/usuario/<string:nombre>')
 
 ''' Acciones de usuario (faltan implementar) '''
-#api.add_resource(resources.Denunciar, '/denunciar/<int:lugar>')
-#api.add_resource(resources.MeGusta, '/megusta/<int:lugar_id>')
+api.add_resource(resources.Denunciar, '/denunciar/<int:lugar>')
+api.add_resource(resources.MeGusta, '/megusta/<int:lugar_id>')
 api.add_resource(resources.AddRent, '/alquilar/<int:lugar_id>')
 
 ''' Acciones administrador '''
 api.add_resource(resources.AddSport, '/agregar/deporte/<int:lugar_id>')
-#api.add_resource(resources.AddSport, '/agregar/cancha/<int:lugar_id>')
-#api.add_resource(resources.AddSport, '/agregar/horario/<int:lugar_id>')
-#api.add_resource(resources.AddSport, '/agregar/dirreccion/<int:lugar_id>')
+api.add_resource(resources.AddCancha, '/agregar/cancha/<int:lugar_id>')
+api.add_resource(resources.AddHorario, '/agregar/horario/<int:lugar_id>')
+api.add_resource(resources.AddAddress, '/agregar/dirreccion/<int:lugar_id>')

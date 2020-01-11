@@ -44,6 +44,19 @@ CREATE TABLE `Lugar` (
   PRIMARY KEY(`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `Direccion` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id_lugar` INT UNSIGNED NOT NULL REFERENCES `Lugar`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  `Address1` VARCHAR(120) NOT NULL,
+  `Address2` VARCHAR(120),
+  `Address3` VARCHAR(100) NOT NULL,
+  `City`     VARCHAR(100) NOT NULL,
+  `State`    CHAR(2) NOT NULL,
+  `Country`  CHAR(2) NOT NULL,
+  `PostalCode` VARCHAR(16) NOT NULL,
+  PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE `Cancha` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `id_lugar` INT UNSIGNED NOT NULL REFERENCES `Lugar`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -90,6 +103,11 @@ CREATE TABLE `HorarioNormal` (
   PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+/*
+  Esta tabla se va usar cuando el campo de vacaciones de HorarioNormal
+  valga 1.
+*/
 CREATE TABLE `HorarioAnulado` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `id_lugar` INT UNSIGNED NOT NULL REFERENCES `Lugar`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -141,6 +159,8 @@ CREATE TABLE `PoseeEquipo` (
   `id_equipo` INT UNSIGNED NOT NULL REFERENCES `Equipo`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   PRIMARY KEY (`id_persona`, `id_equipo`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 
 
 CREATE TABLE `Denuncias` (

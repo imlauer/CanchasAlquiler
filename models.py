@@ -9,10 +9,23 @@ class DenunciarModel(db.Model):
       'schema': 'CanchasAlquiler',
       'autoload_with': db.engine
   }
+  def find_by_lugar_persona(cls, id_lugar, id_persona):
+    return cls.query.filter_by(id_lugar=id_lugar, id_persona=id_persona).first()
+
   def save_to_db(self):
     db.session.add(self)
     db.session.commit() 
 
+class CanchaModel(db.Model):
+  __tablename__ = 'Cancha'
+  __table_args__ = {
+      'autoload': True,
+      'schema': 'CanchasAlquiler',
+      'autoload_with': db.engine
+  }
+  def save(self):
+    db.session.add(self)
+    db.session.commit() 
 
 class LeGustaModel(db.Model):
   __tablename__ = 'HorarioNormal'
@@ -25,6 +38,22 @@ class LeGustaModel(db.Model):
     db.session.add(self)
     db.session.commit() 
 
+class DireccionModel(db.Model):
+  __tablename__ = 'HorarioNormal'
+  __table_args__ = {
+      'autoload': True,
+      'schema': 'CanchasAlquiler',
+      'autoload_with': db.engine
+  }
+  
+  def find_by_ID(cls,lugar_id):
+    return cls.query.filter_by(id_lugar=lugar_id).first()
+
+  def save_to_db(self):
+    db.session.add(self)
+    db.session.commit()
+
+
 class HorarioModel(db.Model):
   __tablename__ = 'HorarioNormal'
   __table_args__ = {
@@ -35,6 +64,8 @@ class HorarioModel(db.Model):
   def save_to_db(self):
     db.session.add(self)
     db.session.commit()
+  def find_by_lugar(cls,lugar_id):
+    return cls.query.filter_by(id_lugar=lugar_id).first()
 
 class LugarModel(db.Model):
   __tablename__ = 'Lugar'

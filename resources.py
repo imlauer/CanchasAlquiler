@@ -128,20 +128,20 @@ class Denunciar(Resource):
     current_user_id = UsuarioModel.find_by_nombre(nombre = current_user).id
 
     # Buscar una forma para confirmar si está o no denunciado el lugar.
-    #if DenunciarModel.find_by_lugar_nombre(lugar_id,current_user_id):
-    #  return {'message':'Ya está denunciado'}
+    if DenunciarModel.find_by_lugar_persona(lugar_id,current_user_id):
+      return {'message':'Ya está denunciado'}
 
-    #denuncia = DenunciarModel (
-    #  id_lugar = lugar_id,
-    #  id_persona = current_user_id
-    #)
+    denuncia = DenunciarModel (
+      id_lugar = lugar_id,
+      id_persona = current_user_id
+    )
 
-    #try:
-    #  denuncia.save()
-    #  return {'message': 'Reportaste el lugar {} con éxito'.format(lugar_id)}
-    #except Exception as e:
-    #  print(e)
-    #  return {'message': "Algo fue mal"}, 500
+    try:
+      denuncia.save()
+      return {'message': 'Reportaste el lugar {} con éxito'.format(lugar_id)}
+    except Exception as e:
+      print(e)
+      return {'message': "Algo fue mal"}, 500
 
 
 class MeGusta(Resource):
@@ -226,23 +226,170 @@ class SecretResource(Resource):
             'answer': 42
         }
 
-class AddSport(Resource):
+
+
+
+
+class AddCancha(Resource):
   #@jwt_required
-  def post(self):
+  def post(self,lugar_id):
     parser = reqparse.RequestParser()
-    parser.add_argument('lugar_id',
+    parser.add_argument('tipo_de_pasto',
         help='Este campo no puede estar vacio',
         required=True)
+    parser.add_argument('tipo_de_piso',
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('techado', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('iluminacion', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('fotodecancha',
+        help='Este campo no puede estar vacio',
+        required=True)
+
+    data = parser.parse_args()
+
+    if not LugarModel.query.get(lugar_id):
+      return {'message':'No existe ese lugar'}
+
+    nuevacancha = CanchaModel (
+      id_lugar = lugar_id,
+      tipo_de_pasto = data['tipo_de_pasto'],
+      tipo_de_piso = data['tipo_de_piso'],
+      techado = data['techado'],
+      iluminacion = data['iluminacion'],
+      fotodecancha = data['fotodecancha']
+    )
+
+    try:
+      nuevacancha.save()
+      return {'message': 'La cancha se ha agregado'}
+    except Exception as e:
+      print(e)
+      return {'message': "Algo fue mal"}, 500
+
+
+
+
+class AddHorario(Resource):
+  #@jwt_required
+  def post(self,lugar_id):
+    parser = reqparse.RequestParser()
+    parser.add_argument('diadelasemana', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('horadeapertura_dia', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('horadecierre_dia', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('horadeapertura_tarde', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('horadecierre_tarde', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('vacaciones', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
+
+    data = parser.parse_args()
+
+    if not LugarModel.query.get(lugar_id):
+      return {'message':'No existe ese lugar'}
+
+    if HorarioModel.find_by_lugar(lugar_id):
+      return {'message':'Ya posee un horario'}
+
+    nuevo_horario = Model (
+      id_lugar = lugar_id,
+      diadelasemana = data['diadelasemana'],
+      horadeapertura_dia = data['horadeapertura_dia'],
+      horadecierre_dia = data['horadecierre_dia'],
+      horadeapertura_tarde = data['horadeapertura_tarde'],
+      horadecierre_tarde = data['horadecierre_tarde'],
+      vacaciones = data['diadelasemana'],
+    )
+
+    try:
+      nuevo_horario.save_to_db()
+      return {'message': 'El horario se ha agregado'}
+    except Exception as e:
+      print(e)
+      return {'message': "Algo fue mal"}, 500
+
+
+
+class AddAddress(Resource):
+  #@jwt_required
+  def post(self,lugar_id):
+    parser = reqparse.RequestParser()
+    parser.add_argument('Address1',
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('Address2', 
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('Address3',
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('City',
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('State', 
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('Country', 
+        help='Este campo no puede estar vacio',
+        required=True)
+    parser.add_argument('PostalCode', 
+        help='Este campo no puede estar vacio',
+        required=True)
+
+    data = parser.parse_args()
+
+    if not LugarModel.query.get(lugar_id):
+      return {'message':'No existe ese lugar'}
+
+    if DireccionModel.find_by_ID(lugar_id):
+      return {'message':'Ya posee un horario'}
+
+    nuevadireccion = Model (
+      id_lugar = lugar_id,
+      Address1 = data['Address1'],
+      Address2 = data['Address2'],
+      Address3 = data['Address3'],
+      City = data['City'],
+      State = data['State'],
+      Country = data['Country'],
+      PostalCode = data['PostalCode'],
+    )
+
+    try:
+      nuevadireccion.save_to_db()
+      return {'message': 'El horario se ha agregado'}
+    except Exception as e:
+      print(e)
+      return {'message': "Algo fue mal"}, 500
+
+class AddSport(Resource):
+  #@jwt_required
+  def post(self,lugar_id):
+    parser = reqparse.RequestParser()
     parser.add_argument('tipo_deporte',
         help='Este campo no puede estar vacio',
         required=True)
 
     data = parser.parse_args()
 
-    if not LugarModel.query.get(data['lugar_id']):
+    if not LugarModel.query.get(lugar_id):
       return {'message':'No existe ese lugar'}
 
-    row = DeporteModel.find_by_lugar(data['lugar_id'])
+    row = DeporteModel.find_by_lugar(lugar_id)
 
     invalido = 0
     for i in range(0,len(row)):
@@ -253,7 +400,7 @@ class AddSport(Resource):
       return {'message':'Ese deporte ya existe'}
 
     nuevo_deporte = DeporteModel (
-      id_lugar = data['lugar_id'],
+      id_lugar = lugar_id,
       tipo_deporte = data['tipo_deporte']
     )
 
@@ -290,7 +437,10 @@ class AddRent(Resource):
           help='Este campo no puede estar vacio',
           required=True)
     # Tiempo en horas.
-    parser.add_argument('tiempo',type=int, help='Este campo no puede estar vacio', required=True)
+    parser.add_argument('tiempo',
+          type=int,
+          help='Este campo no puede estar vacio',
+          required=True)
 
     data = parser.parse_args()
 
@@ -327,9 +477,15 @@ class AddRent(Resource):
     DataHorario = HorarioModel.query.gets(id_lugar)
 
     horario_invalido = 0
-    if data['horacomienzo'] >= DataHorario.horadeapertura_dia and data['horacomienzo'] <= DataHorario.horadeapertura_dia:
+    if (
+        data['horacomienzo'] >= DataHorario.horadeapertura_dia and 
+        data['horacomienzo'] <= DataHorario.horadeapertura_dia
+       ):
       horario_invalido = 1
-    if data['horacomienzo'] >= DataHorario.hora_apertura_tarde and data['horacomienzo'] <= DataHorario.horadeapertura_tarde:
+    if (
+    data['horacomienzo'] >= DataHorario.hora_apertura_tarde and
+    data['horacomienzo'] <= DataHorario.horadeapertura_tarde
+       ):
       horario_invalido = 1
 
     if horario_invalido:
@@ -371,9 +527,7 @@ class Reservas(Resource):
     current_user = "Acer_"
     current_user_id = UsuarioModel.find_by_nombre(nombre = current_user).id
 
-    list_ = AlquilaLugarModel.query.get(current_user_id)
-    
-    if list_ == None:
+    if AlquilaLugarModel.query.get(current_user_id) == None:
       return {'message':'No posee ninguna reserva hecha.'}
 
     def to_json(x):
@@ -385,7 +539,6 @@ class Reservas(Resource):
         'tiempo':x.tiempo,
         'confirmado':x.confirmado,
       }
-
     return {'alquiler': list(map(lambda x: to_json(x), AlquilaLugarModel.query.get(current_user_id)))}
 
 '''
