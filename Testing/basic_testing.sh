@@ -69,16 +69,27 @@ add_alquiler(){
   curl --header "Content-Type: application/json" \
     --request POST \
     --data '{"id_lugar":1,"diadelasemana":2,"fechaalquiler":"2020-01-15","horacomienzo":438,"senado":150,"tiempo":3}' \
-    http://localhost:5000/agregar_alquiler
+    http://localhost:5000/alquilar
 }
 
 agregar_horario(){
   curl --header "Content-Type: application/json" \
     --request POST \
-    --data '{"id_lugar":1,"diadelasemana":3,"horadeapertura_dia":420,"horadecierre_dia":720,"horadeapertura_tarde":900,"horadecierre_tarde":1200}' \
-    http://localhost:5000/agregar_horario
+    --data '{"lugar_id":1,"diadelasemana":3,"horadeapertura_dia":420,"horadecierre_dia":720,"horadeapertura_tarde":900,"horadecierre_tarde":1200}' \
+    http://localhost:5000/agregar/horario
 }
 
+me_gusta(){
+  curl --header "Content-Type: application/json" \
+    --request POST \
+    http://localhost:5000/megusta/1
+}
+
+denunciar(){
+  curl --header "Content-Type: application/json" \
+    --request POST \
+    http://localhost:5000/denunciar/1
+}
 
 reservas(){
   curl http://localhost:5000/misreservas
@@ -94,5 +105,5 @@ reservas(){
 #add_place
 #add_sport
 #add_alquiler
-agregar_horario
-#reservas
+#agregar_horario
+reservas

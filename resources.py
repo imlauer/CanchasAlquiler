@@ -119,7 +119,7 @@ class UserLogoutRefresh(Resource):
 
 class Denunciar(Resource):
   #@jwt_required
-  def post(self,lugar_id):
+  def get(self,lugar_id):
     if not LugarModel.query.get(lugar_id):
       return {'message':'No existe ese lugar'}
 
@@ -146,7 +146,7 @@ class Denunciar(Resource):
 
 class MeGusta(Resource):
   @jwt_required
-  def post(self,lugar_id):
+  def get(self,lugar_id):
     if not LugarModel.query.get(lugar_id):
       return {'message':'No existe ese lugar'}
 
@@ -276,8 +276,11 @@ class AddCancha(Resource):
 
 class AddHorario(Resource):
   #@jwt_required
-  def post(self,lugar_id):
+  def post(self):
     parser = reqparse.RequestParser()
+    parser.add_argument('lugar_id', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
     parser.add_argument('diadelasemana', type=int,
         help='Este campo no puede estar vacio',
         required=True)
@@ -326,8 +329,11 @@ class AddHorario(Resource):
 
 class AddAddress(Resource):
   #@jwt_required
-  def post(self,lugar_id):
+  def post(self):
     parser = reqparse.RequestParser()
+    parser.add_argument('lugar_id',
+        help='Este campo no puede estar vacio',
+        required=True)
     parser.add_argument('Address1',
         help='Este campo no puede estar vacio',
         required=True)
@@ -346,11 +352,12 @@ class AddAddress(Resource):
     parser.add_argument('Country', 
         help='Este campo no puede estar vacio',
         required=True)
-    parser.add_argument('PostalCode', 
+    parser.add_argument('PostalCode', type=int,
         help='Este campo no puede estar vacio',
         required=True)
 
     data = parser.parse_args()
+    lugar_id = data['lugar_id']
 
     if not LugarModel.query.get(lugar_id):
       return {'message':'No existe ese lugar'}
@@ -378,13 +385,17 @@ class AddAddress(Resource):
 
 class AddSport(Resource):
   #@jwt_required
-  def post(self,lugar_id):
+  def post(self):
     parser = reqparse.RequestParser()
+    parser.add_argument('lugar_id', type=int,
+        help='Este campo no puede estar vacio',
+        required=True)
     parser.add_argument('tipo_deporte',
         help='Este campo no puede estar vacio',
         required=True)
 
     data = parser.parse_args()
+    lugar_id = data['lugar_id']
 
     if not LugarModel.query.get(lugar_id):
       return {'message':'No existe ese lugar'}
@@ -403,7 +414,6 @@ class AddSport(Resource):
       id_lugar = lugar_id,
       tipo_deporte = data['tipo_deporte']
     )
-
     try:
       nuevo_deporte.save()
       return {'message': 'El deporte {} se ha agregado'.format(data['tipo_deporte'])}
@@ -419,8 +429,12 @@ class AddRent(Resource):
     se pueda elegir de ahí.
   '''
   #@jwt_required
-  def post(self,id_lugar):
+  def post(self):
     parser = reqparse.RequestParser()
+    parser.add_argument('lugar_id',
+          type=int,
+          help='Este campo no puede estar vacio',
+          required=True)
     parser.add_argument('diadelasemana',
           type=int,
           help='Este campo no puede estar vacio',
@@ -443,6 +457,7 @@ class AddRent(Resource):
           required=True)
 
     data = parser.parse_args()
+    id_lugar = data['lugar_id']
 
     if not LugarModel.query.get(id_lugar):
       return {'message':'No existe ese lugar'}
@@ -548,9 +563,12 @@ class AddVacaciones(Resource):
 '''
 
 class AddHorario(Resource):
-  def post(self,id_lugar):
+  def post(self):
     parser = reqparse.RequestParser()
-
+    parser.add_argument('lugar_id', 
+            type=int,
+            help='Este campo no puede estar vacio',
+            required=True)
     parser.add_argument('diadelasemana', 
             type=int,
             help='Este campo no puede estar vacio',
@@ -573,9 +591,10 @@ class AddHorario(Resource):
             required=True)
 
     data = parser.parse_args()   
+    id_lugar = data['lugar_id']
 
     lugar_horario = HorarioModel (
-      id_lugar = id_lugar,
+      id_lugar = data['lugar_id'],
       diadelasemana = data['diadelasemana'],
       horadeapertura_dia = data['horadeapertura_dia'],
       horadecierre_dia = data['horadecierre_dia'],
