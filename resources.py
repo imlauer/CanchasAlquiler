@@ -145,7 +145,7 @@ class Denunciar(Resource):
 
 
 class MeGusta(Resource):
-  @jwt_required
+  #@jwt_required
   def get(self,lugar_id):
     if not LugarModel.query.get(lugar_id):
       return {'message':'No existe ese lugar'}
