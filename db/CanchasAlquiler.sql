@@ -32,6 +32,7 @@ CREATE TABLE `Lugar` (
   `preciodia` INT UNSIGNED NOT NULL,
   `precionoche` INT UNSIGNED NOT NULL,
   `incluye` VARCHAR(250) NOT NULL,
+  `vacaciones` TINYINT UNSIGNED NOT NULL,
   `fotoperfil` TEXT NOT NULL,
   `fotoportada` TEXT NOT NULL,
   `estacionamiento` TINYINT UNSIGNED NULL,
@@ -41,6 +42,7 @@ CREATE TABLE `Lugar` (
   `correo_owner` VARCHAR(100) NOT NULL,
   `provincia` VARCHAR(100) NOT NULL,
   `total_likes` INT UNSIGNED NULL,
+  `denuncias` INT UNSIGNED NOT NULL,
   PRIMARY KEY(`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -99,7 +101,6 @@ CREATE TABLE `HorarioNormal` (
   `horadecierre_dia` INT NULL,
   `horadeapertura_tarde` INT NULL,
   `horadecierre_tarde` INT NULL,
-  `vacaciones` TINYINT UNSIGNED NULL,
   PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -138,6 +139,13 @@ CREATE TABLE `Deportes` (
   `id_lugar` INT UNSIGNED REFERENCES `Lugar`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+/*
+    Tenés que cambiar vacaciones pasalo a Lugar
+
+
+*/
+
 
 /****** ACCIONES DEL USUARIO ******/
 CREATE TABLE `AlquilaLugar` (

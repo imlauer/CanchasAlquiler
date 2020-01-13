@@ -120,7 +120,8 @@ class UserLogoutRefresh(Resource):
 class Denunciar(Resource):
   #@jwt_required
   def get(self,lugar_id):
-    if not LugarModel.query.get(lugar_id):
+    Lugar = LugarModel.query.get(lugar_id)
+    if not Lugar:
       return {'message':'No existe ese lugar'}
 
     # Solo para hacer las pruebas más rápidas.
@@ -131,12 +132,15 @@ class Denunciar(Resource):
     if DenunciarModel.find_by_lugar_persona(lugar_id,current_user_id):
       return {'message':'Ya está denunciado'}
 
+
+    Lugar.denuncias += 1
     denuncia = DenunciarModel (
       id_lugar = lugar_id,
       id_persona = current_user_id
     )
 
     try:
+      Lugar.commit()
       denuncia.save()
       return {'message': 'Reportaste el lugar {} con éxito'.format(lugar_id)}
     except Exception as e:
@@ -194,6 +198,10 @@ class AllUsers(Resource):
       }   
     return {'nombre': list(map(lambda x: to_json(x), UsuarioModel.query.all()))}
 
+
+'''
+    Retornar las direcciones de la tabla.
+'''
 class LugarDescripcion(Resource):
   # TODO: Buscar por nombre
   def get(self,lugar_id):
@@ -222,6 +230,8 @@ class LugarDescripcion(Resource):
         'parrilla':x.parrilla,
         'ciudad':x.ciudad,
         'provincia':x.provincia,
+        'vacaciones':x.vacaciones,
+        'denuncias':x.denuncias,
         'total_likes':x.total_likes
       }
     def to_json_horario(x):
@@ -232,7 +242,6 @@ class LugarDescripcion(Resource):
         'horadecierre_dia':x.horadecierre_dia,
         'horadeapertura_tarde':x.horadeapertura_tarde,
         'horadecierre_tarde':x.horadecierre_tarde,
-        'vacaciones':x.vacaciones
       }
     return {
       'General': to_json_lugar(LugarModel.query.get(lugar_id)),
@@ -335,7 +344,6 @@ class AddHorario(Resource):
       horadecierre_dia = data['horadecierre_dia'],
       horadeapertura_tarde = data['horadeapertura_tarde'],
       horadecierre_tarde = data['horadecierre_tarde'],
-      vacaciones = data['diadelasemana'],
     )
 
     try:
@@ -620,7 +628,6 @@ class AddHorario(Resource):
       horadecierre_dia = data['horadecierre_dia'],
       horadeapertura_tarde = data['horadeapertura_tarde'],
       horadecierre_tarde = data['horadecierre_tarde'],
-      vacaciones = 0
     )
 
     if HorarioModel.query.get(id_lugar):
@@ -689,7 +696,9 @@ class AddPlace(Resource):
       correo_owner = data['correo_owner'],
       ciudad = data['ciudad'],
       provincia = data['provincia'],
-      total_likes = 0
+      total_likes = 0,
+      vacaciones = 0,
+      denuncias = 0
     )
 
     try:
