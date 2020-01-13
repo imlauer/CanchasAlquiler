@@ -41,13 +41,13 @@ api.add_resource(resources.UserLogoutRefresh, '/logout/refresh')
 api.add_resource(resources.TokenRefresh, '/token/refresh')
 
 ''' General '''
-api.add_resource(resources.Reservas,'/misreservas')
+api.add_resource(resources.Reservas,'/info/misreservas')
 api.add_resource(resources.LugarDescripcion,'/info/lugar/<int:lugar_id>')
 api.add_resource(resources.InfoUsuario,'/info/usuario/<string:nombre>')
 
 ''' Acciones de usuario (faltan implementar) '''
 api.add_resource(resources.Denunciar, '/denunciar/<int:lugar_id>')
-api.add_resource(resources.MeGusta, '/megusta/<int:lugar_id>')
+api.add_resource(resources.MeGusta, '/corazon/<int:lugar_id>')
 api.add_resource(resources.AddRent, '/alquilar')
 
 ''' Acciones administrador '''

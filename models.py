@@ -35,6 +35,9 @@ class LeGustaModel(db.Model):
       'schema': 'CanchasAlquiler',
       'autoload_with': db.engine
   }
+  @classmethod
+  def find_by_lugar(cls,id_lugar):
+    return cls.query.filter_by(id_lugar=id_lugar).first()
 
   @classmethod
   def find_by_lugar_nombre(cls,id_lugar,id_persona):
@@ -82,7 +85,8 @@ class LugarModel(db.Model):
       'schema': 'CanchasAlquiler',
       'autoload_with': db.engine
   }
-
+  def commit(self):
+    db.session.commit() 
   @classmethod
   def find_by_nombre(cls, nombre):
     return cls.query.filter_by(nombre = nombre).first()

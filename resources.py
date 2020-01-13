@@ -147,7 +147,8 @@ class Denunciar(Resource):
 class MeGusta(Resource):
   #@jwt_required
   def get(self,lugar_id):
-    if not LugarModel.query.get(lugar_id):
+    Lugar = LugarModel.query.get(lugar_id)
+    if not Lugar:
       return {'message':'No existe ese lugar'}
 
     # Solo para hacer las pruebas más rápidas.
@@ -157,12 +158,18 @@ class MeGusta(Resource):
     if LeGustaModel.find_by_lugar_nombre(lugar_id,current_user_id):
       return {'message':'Ya te gusta este lugar'}
 
+    '''
+      So fucking easy with SQLAlchemy, rofl.
+    '''
+    Lugar.total_likes += 1
+
     nuevomegusta = LeGustaModel (
       id_lugar = lugar_id,
       id_persona = current_user_id
     )
 
     try:
+      Lugar.commit()
       nuevomegusta.save()
       return {'message': 'Ahora te gusta el lugar {}'.format(lugar_id)}
     except Exception as e:
@@ -199,7 +206,7 @@ class LugarDescripcion(Resource):
       los me gusta, las denuncias, etc.
     '''
 
-    def to_json(x):
+    def to_json_lugar(x):
       return { 
         'lugar_id': x.id,
         'nombre': x.nombre,
@@ -217,7 +224,20 @@ class LugarDescripcion(Resource):
         'provincia':x.provincia,
         'total_likes':x.total_likes
       }
-    return {'lugar': to_json(LugarModel.query.get(lugar_id))}
+    def to_json_horario(x):
+      return { 
+        'lugar_id': x.id_lugar,
+        'diadelasemana': x.diadelasemana,
+        'horadeapertura_dia': x.horadeapertura_dia,
+        'horadecierre_dia':x.horadecierre_dia,
+        'horadeapertura_tarde':x.horadeapertura_tarde,
+        'horadecierre_tarde':x.horadecierre_tarde,
+        'vacaciones':x.vacaciones
+      }
+    return {
+      'General': to_json_lugar(LugarModel.query.get(lugar_id)),
+      'Horario': to_json_horario(HorarioModel.find_by_lugar(lugar_id)),
+    }
 
 class SecretResource(Resource):
     @jwt_required      
